@@ -1,7 +1,7 @@
 package com.yiuDashboard.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -18,7 +18,7 @@ public class PublicStudentService {
     @Value("${univapi.school-id}")
     private String schoolId;
 
-    public Mono<String> getEnrolledStudentCount(int year) {
+    public Mono<String> getComparisonEnrolledStudent(int year) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/StudentService/getComparisonEnrolledStudent")
@@ -26,7 +26,35 @@ public class PublicStudentService {
                         .queryParam("schlId", schoolId)
                         .queryParam("svyYr", year)
                         .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 10)
+                        .queryParam("numOfRows", 999)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getNoticeGraduateEmploymentRate(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/StudentService/getNoticeGraduateEmploymentRate")
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .queryParam("pageNo", 1)
+                        .queryParam("numOfRows", 999)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getComparisonForeignStudentCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/StudentService/getComparisonForeignStudentCrntSt")
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .queryParam("pageNo", 1)
+                        .queryParam("numOfRows", 999)
                         .build())
                 .retrieve()
                 .bodyToMono(String.class);
