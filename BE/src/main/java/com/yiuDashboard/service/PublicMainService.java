@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class PublicStudentService {
+public class PublicMainService {
 
     private final WebClient webClient;
 
@@ -39,8 +39,6 @@ public class PublicStudentService {
                         .queryParam("serviceKey", serviceKey)
                         .queryParam("schlId", schoolId)
                         .queryParam("svyYr", year)
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 999)
                         .build())
                 .retrieve()
                 .bodyToMono(String.class);
@@ -53,8 +51,30 @@ public class PublicStudentService {
                         .queryParam("serviceKey", serviceKey)
                         .queryParam("schlId", schoolId)
                         .queryParam("svyYr", year)
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 999)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getComparisonFullTimeFacultyEnsureCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getComparisonScholarshipBenefitCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/FinancesService/getComparisonScholarshipBenefitCrntSt")
+                        .queryParam("serviceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
                         .build())
                 .retrieve()
                 .bodyToMono(String.class);

@@ -1,13 +1,11 @@
 package com.yiuDashboard.security;
 
-import com.yiuDashboard.entity.Role;
 import com.yiuDashboard.entity.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -17,9 +15,18 @@ public class CustomUserDetails implements UserDetails {
         this.user = user;
     }
 
+    // 현재 user의 role을 반환 (ex. "ROLE_ADMIN" / "ROLE_USER" 등)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(user.getRole().name()));
+        Collection<GrantedAuthority> collection = new ArrayList<>();
+        collection.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                return "ROLE_" + user.getRole().name();
+            }
+        });
+
+        return collection;
     }
 
     @Override
@@ -29,7 +36,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getLoginId();
     }
 
     @Override
@@ -50,9 +57,5 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public Role getRole() {
-        return user.getRole();
     }
 }

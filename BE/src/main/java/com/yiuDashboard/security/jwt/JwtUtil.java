@@ -1,63 +1,49 @@
 package com.yiuDashboard.security.jwt;
 
-import com.yiuDashboard.security.CustomUserDetails;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 
 @Component
-@RequiredArgsConstructor
 public class JwtUtil {
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
+    private SecretKey secretKey;
 
-    private final long validityInMilliseconds = 1000 * 60 * 60; // 1 hour
-
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    // @Value : application.properties 에서의 특정한 변수 데이터를 가져올 수 있음
+    // string key 는 jwt 에서 사용 안하므로 객체 키 생성!
+    // "${jwt.secret-key}" : application.properties 에 저장된 jwt: secret-key 에 저장된 암호화 키 사용
+    public JwtUtil(@Value("${jwt.secret-key}") String secret) {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // JWT 생성
-    public String generateToken(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+//    loginId 반환 메서드
+    public String getLoginId(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("loginId", String.class);
+    }
 
-        Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
-        claims.put("role", userDetails.getRole().name());
+//    role 반환 메서드
+    public String getRole(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("role", String.class);
+    }
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+//    토큰이 소멸(유효기간 만료)하였는지 검증 메서드
+    public Boolean isExpired(String token) {
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
+    }
 
+//    토큰 생성 메서드
+    public String createJwt(String loginId, String role, Long expiredMs) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(getSigningKey())
+                .claim("loginId", loginId)
+                .claim("role", role)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    // 토큰에서 유저명 추출
-    public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    // 토큰 유효성 검사
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("Expired or invalid JWT token");
-        }
     }
 }
