@@ -1,5 +1,6 @@
 package com.yiuDashboard.security.jwt;
 
+import com.yiuDashboard.entity.Role;
 import com.yiuDashboard.security.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        String authority = auth.getAuthority(); // "ROLE_ADMIN"
+        String role = authority.replace("ROLE_", ""); // "ADMIN"
 
 //        JwtUtil에 token 생성 요청
         String token = jwtUtil.createJwt(username, role, 60*60*1000L);

@@ -1,5 +1,6 @@
 package com.yiuDashboard.security.jwt;
 
+import com.yiuDashboard.entity.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

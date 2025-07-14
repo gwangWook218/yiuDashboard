@@ -23,8 +23,20 @@ public class AdminService {
                 .uri(uriBuilder -> uriBuilder
                         .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
                         .queryParam("ServiceKey", serviceKey)
+                        .queryParam("indctId", 66)
                         .queryParam("schlId", schoolId)
                         .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getRegionalFullTimeFacultyEnsureCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/EducationResearchService/getRegionalFullTimeFacultyEnsureCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlDivCd", 02)
                         .build())
                 .retrieve()
                 .bodyToMono(String.class);

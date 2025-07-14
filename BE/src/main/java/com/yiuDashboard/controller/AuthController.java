@@ -87,8 +87,14 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/login")
+    @GetMapping("/me")
     public String userInfo(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) return "비로그인 상태입니다.";
+
+        // 인증 객체 정보 로그
+        System.out.println(">> Principal: " + auth.getPrincipal());
+        System.out.println(">> Authorities: " + auth.getAuthorities());
+
         User user = authService.getLoginUserById(auth.getName());
         return "ID: " + user.getLoginId() + "\nrole: " + user.getRole();
     }
