@@ -1,9 +1,14 @@
 package com.yiuDashboard.controller;
 
+import com.yiuDashboard.dto.AdmissionRateDTO;
 import com.yiuDashboard.service.AdminService;
+import com.yiuDashboard.service.GraduateAdmissionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/faculty")
@@ -11,54 +16,65 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     private final AdminService adminService;
+    private final GraduateAdmissionService admissionService;
 
-    @GetMapping("/ensure/compare/{year}")
-    public String getComparisonFullTimeFacultyEnsureCrntSt(@PathVariable int year, Authentication authentication) {
-        return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year).block();
+    @GetMapping("/ensure/compare")
+    public String getComparisonFullTimeFacultyEnsureCrntSt(@Param("year") int year, @Param("indctId") int indctId, Authentication authentication) {
+        return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId).block();
     }
 
-    @GetMapping("/ensure/region/{schlDivCd}")
-    public String getRegionalFullTimeFacultyEnsureCrntSt(@PathVariable int schlDivCd, Authentication authentication) {
-        return adminService.getRegionalFullTimeFacultyEnsureCrntSt(schlDivCd).block();
+    @GetMapping("/ensure/region")
+    public String getRegionalFullTimeFacultyEnsureCrntSt(Authentication authentication) {
+        return adminService.getRegionalFullTimeFacultyEnsureCrntSt().block();
     }
 
-    @GetMapping("/ensure/notice/{year}")
-    public String getNoticeFullTimeFacultyEnsureRate(@PathVariable int year, Authentication authentication) {
+    @GetMapping("/ensure/notice")
+    public String getNoticeFullTimeFacultyEnsureRate(@Param("year") int year, Authentication authentication) {
         return adminService.getNoticeFullTimeFacultyEnsureRate(year).block();
     }
 
-    @GetMapping("/stdntNum/compare/{year}")
-    public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@PathVariable int year, Authentication authentication) {
+    @GetMapping("/stdntNum/compare")
+    public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(year).block();
     }
 
-    @GetMapping("/stdntNum/region/{schlDivCd}")
-    public String getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent(@PathVariable int schlDivCd, Authentication authentication) {
-        return adminService.getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent(schlDivCd).block();
+    @GetMapping("/stdntNum/region")
+    public String getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent(Authentication authentication) {
+        return adminService.getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent().block();
     }
 
     @GetMapping("/lecRatio/compare")
-    public String getComparisonLectureChargeRatio(@PathVariable int year, Authentication authentication) {
+    public String getComparisonLectureChargeRatio(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonLectureChargeRatio(year).block();
     }
 
-    @GetMapping("/lecRatio/region/{schlDivCd}")
-    public String getRegionalLectureChargeRatio(@PathVariable int schlDivCd, Authentication authentication) {
-        return adminService.getRegionalLectureChargeRatio(schlDivCd).block();
+    @GetMapping("/lecRatio/region")
+    public String getRegionalLectureChargeRatio(Authentication authentication) {
+        return adminService.getRegionalLectureChargeRatio().block();
     }
 
-    @GetMapping("/enrolledStdnt/compare/{year}")
-    public String getComparisonEnrolledStudentEnsureRate(@PathVariable int year, Authentication authentication) {
+    @GetMapping("/enrolledStdnt/compare")
+    public String getComparisonEnrolledStudentEnsureRate(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonEnrolledStudentEnsureRate(year).block();
     }
 
-    @GetMapping("/freshCompetite/compare/{year}")
-    public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@PathVariable int year, Authentication authentication) {
+    @GetMapping("/freshCompetite/compare")
+    public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate(year).block();
     }
 
-    @GetMapping("/register/compare/{year}")
-    public String getComparisonEntranceModelLastRegistrationRatio(@PathVariable int year, Authentication authentication) {
+    @GetMapping("/register/compare")
+    public String getComparisonEntranceModelLastRegistrationRatio(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonEntranceModelLastRegistrationRatio(year).block();
+    }
+
+    @GetMapping("/graduater/admission")
+    public List<AdmissionRateDTO> getAdmission(@Param("year") int year) {
+        return admissionService.getAdmissionRate(year);
+    }
+
+    @GetMapping("graduater/employ")
+    public String getNoticeGraduateEmploymentRate(@Param("year") int year, Authentication authentication) {
+        return adminService.getNoticeGraduateEmploymentRate(year).block();
     }
 }

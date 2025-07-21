@@ -18,12 +18,15 @@ public class AdminService {
     @Value("${univapi.school-id}")
     private String schoolId;
 
-    public Mono<String> getComparisonFullTimeFacultyEnsureCrntSt(int year) {
+    @Value("${univapi.school-divCd}")
+    private String schlDivCd;
+
+    public Mono<String> getComparisonFullTimeFacultyEnsureCrntSt(int year, int indctId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
                         .queryParam("ServiceKey", serviceKey)
-                        .queryParam("indctId", 66)
+                        .queryParam("indctId", indctId)
                         .queryParam("schlId", schoolId)
                         .queryParam("svyYr", year)
                         .build())
@@ -31,7 +34,7 @@ public class AdminService {
                 .bodyToMono(String.class);
     }
 
-    public Mono<String> getRegionalFullTimeFacultyEnsureCrntSt(int schlDivCd) {
+    public Mono<String> getRegionalFullTimeFacultyEnsureCrntSt() {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/EducationResearchService/getRegionalFullTimeFacultyEnsureCrntSt")
@@ -66,7 +69,7 @@ public class AdminService {
                 .bodyToMono(String.class);
     }
 
-    public Mono<String> getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent(int schlDivCd) {
+    public Mono<String> getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent() {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/EducationResearchService/getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent")
@@ -91,7 +94,7 @@ public class AdminService {
                 .bodyToMono(String.class);
     }
 
-    public Mono<String> getRegionalLectureChargeRatio(int schlDivCd) {
+    public Mono<String> getRegionalLectureChargeRatio() {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/EducationResearchService/getRegionalLectureChargeRatio")
@@ -130,6 +133,18 @@ public class AdminService {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/StudentService/getComparisonEntranceModelLastRegistrationRatio")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getNoticeGraduateEmploymentRate(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/StudentService/getNoticeGraduateEmploymentRate")
                         .queryParam("ServiceKey", serviceKey)
                         .queryParam("schlId", schoolId)
                         .queryParam("svyYr", year)
