@@ -24,5 +24,9 @@ public class NewAdmissionStats {
     private int admissionQuota;        // 모집 정원
     private int currentStudents;       // 재학생 수
     private String graduateTrend;  // 졸업 후 진출 진로 요약
+    private String majorFeatures;     // 전공 특성 요약
+    private String coreSubjects;      // 주요 교과목
+    private String relatedCareers;    // 관련 진로
+
 
 }

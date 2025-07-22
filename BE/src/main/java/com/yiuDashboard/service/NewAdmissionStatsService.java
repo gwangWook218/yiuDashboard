@@ -4,6 +4,8 @@ import com.yiuDashboard.repository.NewAdmissionStatsRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class NewAdmissionStatsService {
@@ -55,5 +57,24 @@ public class NewAdmissionStatsService {
     public String getGraduateTrendByDepartmentName(String departmentName) {
         Optional<NewAdmissionStats> optionalStat = repository.findByDepartmentName(departmentName);
         return optionalStat.map(NewAdmissionStats::getGraduateTrend).orElse("해당 학과 정보를 찾을 수 없습니다.");
+    }
+
+    public Map<String, String> getMajorInfoByDepartmentName(String departmentName) {
+        Optional<NewAdmissionStats> optionalStat = repository.findByDepartmentName(departmentName);
+
+        if (optionalStat.isEmpty()) {
+            Map<String, String> errorMap = new HashMap<>();
+            errorMap.put("error", "해당 학과 정보를 찾을 수 없습니다.");
+            return errorMap;
+        }
+
+        NewAdmissionStats stat = optionalStat.get();
+
+        Map<String, String> majorInfo = new HashMap<>();
+        majorInfo.put("majorFeatures", stat.getMajorFeatures());
+        majorInfo.put("coreSubjects", stat.getCoreSubjects());
+        majorInfo.put("relatedCareers", stat.getRelatedCareers());
+
+        return majorInfo;
     }
 }

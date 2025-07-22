@@ -3,8 +3,9 @@ package com.yiuDashboard.controller;
 import com.yiuDashboard.entity.NewAdmissionStats;
 import com.yiuDashboard.service.NewAdmissionStatsService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/new-admission-stats")
@@ -45,6 +46,12 @@ public class NewAdmissionStatsController {
     public ResponseEntity<String> getGraduateTrend(@RequestParam String departmentName) {
         String trend = service.getGraduateTrendByDepartmentName(departmentName);
         return ResponseEntity.ok(trend);
+    }
+
+    @GetMapping("/major-info")
+    public ResponseEntity<Map<String, String>> getMajorInfo(@RequestParam String departmentName) {
+        Map<String, String> majorInfo = service.getMajorInfoByDepartmentName(departmentName);
+        return ResponseEntity.ok(majorInfo);
     }
 
 
