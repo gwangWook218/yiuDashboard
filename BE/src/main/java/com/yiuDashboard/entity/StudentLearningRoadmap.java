@@ -21,7 +21,7 @@ public class StudentLearningRoadmap {
     @Column(nullable = false)
     private String studentId;
 
-    // 목표 학기 (예: "3학년 2학기")
+    // 목표 학기
     @Column(nullable = false)
     private String targetSemester;
 

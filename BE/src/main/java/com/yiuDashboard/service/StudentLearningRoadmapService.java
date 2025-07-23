@@ -4,6 +4,7 @@ import com.yiuDashboard.entity.StudentLearningRoadmap;
 import com.yiuDashboard.repository.StudentLearningRoadmapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,4 +25,11 @@ public class StudentLearningRoadmapService {
 
         return roadmapRepository.save(roadmap);
     }
+    public List<Object[]> getSemesterGpaTrend(String studentId) {
+        return roadmapRepository.findSemesterGpaTrend(studentId);
+    }
+    public List<Object[]> getSubjectTypeGpaDistribution(String studentId) {
+        return roadmapRepository.findSubjectTypeGpaDistribution(studentId);
+    }
+
 }
