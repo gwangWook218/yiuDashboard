@@ -5,8 +5,8 @@ import com.yiuDashboard.service.NewAdmissionStatsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admission-stats")
@@ -34,5 +34,10 @@ public class NewAdmissionStatsController {
     @PostMapping
     public ResponseEntity<NewAdmissionStats> saveStats(@RequestBody NewAdmissionStats stats) {
         return ResponseEntity.ok(service.saveStats(stats));
+    }
+
+    @GetMapping("/comparison/{departmentName}")
+    public ResponseEntity<Map<String, Object>> getDepartmentAdmissionComparison(@PathVariable String departmentName) {
+        return ResponseEntity.ok(service.getDepartmentAdmissionComparison(departmentName));
     }
 }
