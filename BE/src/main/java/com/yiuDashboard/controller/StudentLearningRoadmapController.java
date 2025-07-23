@@ -5,6 +5,7 @@ import com.yiuDashboard.service.StudentLearningRoadmapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/learning-roadmap")
@@ -20,4 +21,18 @@ public class StudentLearningRoadmapController {
         StudentLearningRoadmap roadmap = service.setTargetGrade(studentId, targetGrade);
         return ResponseEntity.ok(roadmap);
     }
+    // 학기별 성적 추이 조회
+    @GetMapping("/semester-trend")
+    public ResponseEntity<List<Object[]>> getSemesterGpaTrend(@RequestParam String studentId) {
+        List<Object[]> trend = service.getSemesterGpaTrend(studentId);
+        return ResponseEntity.ok(trend);
+    }
+
+    // 과목 유형별 성적 분포 조회
+    @GetMapping("/subject-type-distribution")
+    public ResponseEntity<List<Object[]>> getSubjectTypeGpaDistribution(@RequestParam String studentId) {
+        List<Object[]> distribution = service.getSubjectTypeGpaDistribution(studentId);
+        return ResponseEntity.ok(distribution);
+    }
+
 }
