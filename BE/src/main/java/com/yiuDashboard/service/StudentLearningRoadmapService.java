@@ -32,4 +32,27 @@ public class StudentLearningRoadmapService {
         return roadmapRepository.findSubjectTypeGpaDistribution(studentId);
     }
 
+    public String simulateGoalAchievement(String studentId, int remainingSemesters) {
+
+        StudentLearningRoadmap roadmap = roadmapRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("학생 데이터를 찾을 수 없습니다."));
+
+        Double currentGpa = roadmap.getTargetGpa();
+        Double targetGrade = roadmap.getTargetGrade();
+        if (targetGrade == null) {
+            return "목표 성적이 설정되어 있지 않습니다.";
+        }
+
+        double requiredAverage = (targetGrade - currentGpa) / remainingSemesters;
+
+        if (requiredAverage <= 0) {
+            return "이미 목표 성적을 달성했습니다!";
+        } else if (requiredAverage <= 4.5) {
+            return "목표 성적 달성을 위해 학기당 평균 " + String.format("%.2f", requiredAverage) + " 이상이 필요합니다.";
+        } else {
+            return "목표 성적 달성이 어려울 수 있습니다. 추가 학습 계획이 필요합니다.";
+        }
+    }
+
+
 }
