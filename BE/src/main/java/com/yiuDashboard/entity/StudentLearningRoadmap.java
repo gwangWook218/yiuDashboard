@@ -29,6 +29,18 @@ public class StudentLearningRoadmap {
     @Column(nullable = false)
     private Double targetGpa;
 
+    // 현재 누적 GPA
+    @Column(nullable = false)
+    private Double currentGpa;
+
+    // 남은 학기 수
+    @Column(nullable = false)
+    private Integer remainingSemesters;
+
+    // 목표 달성 가능 여부
+    @Column
+    private Boolean achievable;
+
     // 추가 설명 (선택)
     @Column(length = 500)
     private String description;

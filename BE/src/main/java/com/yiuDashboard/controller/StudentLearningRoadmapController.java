@@ -35,4 +35,13 @@ public class StudentLearningRoadmapController {
         return ResponseEntity.ok(distribution);
     }
 
+    // 목표 달성 가능 여부 계산
+    @GetMapping("/goal-simulation")
+    public ResponseEntity<String> simulateGoalAchievement(
+            @RequestParam String studentId,
+            @RequestParam int remainingSemesters) {
+
+        String result = service.simulateGoalAchievement(studentId, remainingSemesters);
+        return ResponseEntity.ok(result);
+    }
 }

@@ -23,4 +23,9 @@ public interface StudentLearningRoadmapRepository extends JpaRepository<StudentL
     @Query("SELECT s.description, AVG(s.targetGpa) FROM StudentLearningRoadmap s " +
             "WHERE s.studentId = :studentId GROUP BY s.description")
     List<Object[]> findSubjectTypeGpaDistribution(@Param("studentId") String studentId);
+
+    // 목표 달성 시뮬레이션 데이터 (전체 성적 평균 및 이수 학기 수)
+    @Query("SELECT AVG(s.targetGpa), COUNT(s.targetSemester) " +
+            "FROM StudentLearningRoadmap s WHERE s.studentId = :studentId")
+    Object[] findCurrentGpaAndSemesterCount(@Param("studentId") String studentId);
 }
