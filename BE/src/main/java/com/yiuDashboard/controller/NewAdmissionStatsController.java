@@ -40,4 +40,10 @@ public class NewAdmissionStatsController {
     public ResponseEntity<Map<String, Object>> getDepartmentAdmissionComparison(@PathVariable String departmentName) {
         return ResponseEntity.ok(service.getDepartmentAdmissionComparison(departmentName));
     }
+
+    @GetMapping("/career-summary/{departmentName}")
+    public ResponseEntity<String> getGraduateCareerSummary(@PathVariable String departmentName) {
+        String summary = service.getGraduateCareerSummary(departmentName);
+        return ResponseEntity.ok(summary);
+    }
 }

@@ -20,4 +20,8 @@ public interface NewAdmissionStatsRepository extends JpaRepository<NewAdmissionS
     // 유사 계열 평균 충원율 계산
     @Query("SELECT AVG(n.fillRate) FROM NewAdmissionStats n WHERE n.majorCategory = :majorCategory")
     Double findAverageFillRateByMajorCategory(@Param("majorCategory") String majorCategory);
+
+    // 학과별 졸업생 진출 진로 요약 정보 조회
+    @Query("SELECT n.graduateCareerSummary FROM NewAdmissionStats n WHERE n.departmentName = :departmentName")
+    String findGraduateCareerSummaryByDepartment(@Param("departmentName") String departmentName);
 }

@@ -38,6 +38,10 @@ public class NewAdmissionStats {
     @Column
     private Double similarMajorAverageFillRate; // 유사 계열 평균 충원율
 
+    // 졸업생 진출 진로 요약 정보
+    @Column(length = 1000)
+    private String graduateCareerSummary;
+
     public double calculateFillRate() {
         if (studentQuota == 0) return 0.0;
         return ((double) enrolledStudentCount / studentQuota) * 100.0;

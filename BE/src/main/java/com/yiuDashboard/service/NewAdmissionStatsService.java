@@ -65,4 +65,12 @@ public class NewAdmissionStatsService {
 
         return result;
     }
+    // 학과별 졸업생 진출 진로 요약 정보 조회
+    public String getGraduateCareerSummary(String departmentName) {
+        String summary = repository.findGraduateCareerSummaryByDepartment(departmentName);
+        if (summary == null) {
+            return "졸업생 진출 진로 요약 정보가 없습니다.";
+        }
+        return summary;
+    }
 }
