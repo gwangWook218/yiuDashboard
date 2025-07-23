@@ -24,4 +24,8 @@ public interface NewAdmissionStatsRepository extends JpaRepository<NewAdmissionS
     // 학과별 졸업생 진출 진로 요약 정보 조회
     @Query("SELECT n.graduateCareerSummary FROM NewAdmissionStats n WHERE n.departmentName = :departmentName")
     String findGraduateCareerSummaryByDepartment(@Param("departmentName") String departmentName);
+
+    // 학과별 전공 정보 요약 조회
+    @Query("SELECT n.majorInfoSummary FROM NewAdmissionStats n WHERE n.departmentName = :departmentName")
+    String findMajorInfoSummaryByDepartment(@Param("departmentName") String departmentName);
 }

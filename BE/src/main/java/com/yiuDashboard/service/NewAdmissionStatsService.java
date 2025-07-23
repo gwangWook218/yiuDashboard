@@ -73,4 +73,12 @@ public class NewAdmissionStatsService {
         }
         return summary;
     }
+    // 학과별 전공 요약 정보 조회
+    public String getMajorInfoSummary(String departmentName) {
+        String summary = repository.findMajorInfoSummaryByDepartment(departmentName);
+        if (summary == null) {
+            return "전공 요약 정보가 없습니다.";
+        }
+        return summary;
+    }
 }

@@ -42,6 +42,10 @@ public class NewAdmissionStats {
     @Column(length = 1000)
     private String graduateCareerSummary;
 
+    // 전공 특성, 주요 교과목, 관련 진로 등 요약 정보
+    @Column(length = 1000)
+    private String majorInfoSummary;
+
     public double calculateFillRate() {
         if (studentQuota == 0) return 0.0;
         return ((double) enrolledStudentCount / studentQuota) * 100.0;

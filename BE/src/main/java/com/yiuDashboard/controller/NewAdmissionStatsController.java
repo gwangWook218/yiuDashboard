@@ -46,4 +46,10 @@ public class NewAdmissionStatsController {
         String summary = service.getGraduateCareerSummary(departmentName);
         return ResponseEntity.ok(summary);
     }
+    // 전공 정보 카드 조회 API
+    @GetMapping("/major-info/{departmentName}")
+    public ResponseEntity<String> getMajorInfoSummary(@PathVariable String departmentName) {
+        String summary = service.getMajorInfoSummary(departmentName);
+        return ResponseEntity.ok(summary);
+    }
 }
