@@ -50,4 +50,11 @@ public class StudentLearningRoadmapController {
         boolean result = service.checkGraduationRequirement(studentId);
         return ResponseEntity.ok(result);
     }
+
+    // 졸업생 성적 분포 비교 : 자신의 성취도 상대적 위치 파악
+    @GetMapping("/graduate-comparison")
+    public ResponseEntity<String> compareGraduatePerformance(@RequestParam String studentId) {
+        String result = service.compareGraduatePerformance(studentId);
+        return ResponseEntity.ok(result);
+    }
 }
