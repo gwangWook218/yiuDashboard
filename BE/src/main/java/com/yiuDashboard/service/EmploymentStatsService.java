@@ -33,4 +33,9 @@ public class EmploymentStatsService {
         stats.calculateEmploymentRate(); // 취업률 자동 계산
         return employmentStatsRepository.save(stats);
     }
+
+    //특정 학과의 졸업생 진출 분야별 비율 조회
+    public List<EmploymentStats> getCareerDistributionByDepartment(String departmentName) {
+        return employmentStatsRepository.findByDepartmentNameOrderByCareerFieldRateDesc(departmentName);
+    }
 }

@@ -42,4 +42,11 @@ public class EmploymentStatsController {
         EmploymentStats saved = employmentStatsService.saveEmploymentStats(stats);
         return ResponseEntity.ok(saved);
     }
+
+    //특정 학과의 졸업생 진출 분야별 비율 조회
+    @GetMapping("/career")
+    public ResponseEntity<List<EmploymentStats>> getCareerDistribution(@RequestParam String name) {
+        List<EmploymentStats> stats = employmentStatsService.getCareerDistributionByDepartment(name);
+        return ResponseEntity.ok(stats);
+    }
 }
