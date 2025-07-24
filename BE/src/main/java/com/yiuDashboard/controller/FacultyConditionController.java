@@ -28,4 +28,18 @@ public class FacultyConditionController {
         List<FacultyCondition> results = facultyConditionService.getAllFacultyEnsureRatesDesc();
         return ResponseEntity.ok(results);
     }
+
+    // 특정 학과 전임교원 1인당 학생 수 조회
+    @GetMapping("/student-per-faculty")
+    public ResponseEntity<List<FacultyCondition>> getStudentPerFacultyByDepartment(@RequestParam String name) {
+        List<FacultyCondition> results = facultyConditionService.getStudentPerFacultyByDepartment(name);
+        return ResponseEntity.ok(results);
+    }
+
+    // 전체 학과 전임교원 1인당 학생 수 조회
+    @GetMapping("/student-per-faculty/sorted")
+    public ResponseEntity<List<FacultyCondition>> getAllDepartmentsByStudentPerFacultyDesc() {
+        List<FacultyCondition> results = facultyConditionService.getAllDepartmentsByStudentPerFacultyDesc();
+        return ResponseEntity.ok(results);
+    }
 }

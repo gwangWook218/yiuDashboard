@@ -30,9 +30,25 @@ public class FacultyCondition {
     @Column(nullable = false)
     private int recommendedFacultyCount;
 
-    // 전임교원 확보율 = (전임교원 수 / 권장 전임교원 수) * 100
+    // 전임교원 확보율
     @Column(nullable = false)
     private double facultySecureRate;
+
+    // 학생 수
+    @Column(nullable = false)
+    private int studentCount;
+
+    // 전임교원 1인당 학생 수
+    @Column(nullable = false)
+    private double studentPerFaculty;
+
+    // 데이터 업데이트 메서드 (관리자용)
+    public void updateFacultyStudentData(String departmentName, int fullTimeFacultyCount, int studentCount) {
+        this.departmentName = departmentName;
+        this.fullTimeFacultyCount = fullTimeFacultyCount;
+        this.studentCount = studentCount;
+        this.studentPerFaculty = (fullTimeFacultyCount == 0) ? 0 : (double) studentCount / fullTimeFacultyCount;
+    }
 
     // 데이터 업데이트 메서드 (관리자 수정용)
     public void updateFacultyData(String departmentName, int fullTimeFacultyCount, int recommendedFacultyCount) {
