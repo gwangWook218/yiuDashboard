@@ -52,7 +52,15 @@ public class StudentLearningRoadmapService {
         } else {
             return "목표 성적 달성이 어려울 수 있습니다. 추가 학습 계획이 필요합니다.";
         }
+
     }
+    public boolean checkGraduationRequirement(String studentId) {
+        StudentLearningRoadmap roadmap = roadmapRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("학생 데이터를 찾을 수 없습니다."));
 
+        int earnedCredits = roadmap.getEarnedCredits();
+        int requiredCredits = roadmap.getGraduationRequirementCredits();
 
+        return earnedCredits >= requiredCredits;  // boolean만 반환
+    }
 }
