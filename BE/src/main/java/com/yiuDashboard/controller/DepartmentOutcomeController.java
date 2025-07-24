@@ -35,4 +35,18 @@ public class DepartmentOutcomeController {
         DepartmentOutcome saved = departmentOutcomeService.saveDepartmentOutcome(outcome);
         return ResponseEntity.ok(saved);
     }
+
+    // 특정 학과 전공/교양 성적 평균 및 차이 조회
+    @GetMapping("/grade-comparison")
+    public ResponseEntity<List<DepartmentOutcome>> getGradeComparisonByDepartment(@RequestParam String name) {
+        List<DepartmentOutcome> outcomes = departmentOutcomeService.getGradeComparisonByDepartment(name);
+        return ResponseEntity.ok(outcomes);
+    }
+
+    // 전체 학과 전공 - 교양 성적 차이 조회
+    @GetMapping("/grade-comparison/sorted")
+    public ResponseEntity<List<DepartmentOutcome>> getAllDepartmentsByGradeDifferenceDesc() {
+        List<DepartmentOutcome> outcomes = departmentOutcomeService.getAllDepartmentsByGradeDifferenceDesc();
+        return ResponseEntity.ok(outcomes);
+    }
 }

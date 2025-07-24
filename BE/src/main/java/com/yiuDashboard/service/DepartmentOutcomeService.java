@@ -27,4 +27,14 @@ public class DepartmentOutcomeService {
     public DepartmentOutcome saveDepartmentOutcome(DepartmentOutcome outcome) {
         return departmentOutcomeRepository.save(outcome);
     }
+
+    //특정 학과의 전공/교양 성적 평균 및 차이 조회
+    public List<DepartmentOutcome> getGradeComparisonByDepartment(String departmentName) {
+        return departmentOutcomeRepository.findByDepartmentNameOrderByMajorVsGeneralDifferenceDesc(departmentName);
+    }
+
+    //전체 학과 전공/교양 성적 차이 조회
+    public List<DepartmentOutcome> getAllDepartmentsByGradeDifferenceDesc() {
+        return departmentOutcomeRepository.findAllByOrderByMajorVsGeneralDifferenceDesc();
+    }
 }
