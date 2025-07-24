@@ -44,4 +44,10 @@ public class StudentLearningRoadmapController {
         String result = service.simulateGoalAchievement(studentId, remainingSemesters);
         return ResponseEntity.ok(result);
     }
+    // 졸업 요건 충족 여부 확인
+    @GetMapping("/graduation-check")
+    public ResponseEntity<Boolean> checkGraduationRequirement(@RequestParam String studentId) {
+        boolean result = service.checkGraduationRequirement(studentId);
+        return ResponseEntity.ok(result);
+    }
 }

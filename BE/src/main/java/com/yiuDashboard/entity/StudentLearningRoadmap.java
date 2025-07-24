@@ -37,9 +37,21 @@ public class StudentLearningRoadmap {
     @Column(nullable = false)
     private Integer remainingSemesters;
 
-    // 목표 달성 가능 여부
+    // 목표 가능 여부
     @Column
     private Boolean achievable;
+
+    // 졸업 요건 충족 여부
+    @Column
+    private Boolean graduationSatisfied;
+
+    // 이수 학점
+    @Column(nullable = false)
+    private Integer earnedCredits;
+
+    // 졸업 요건 학점
+    @Column(nullable = false)
+    private Integer graduationRequirementCredits;
 
     // 추가 설명 (선택)
     @Column(length = 500)
