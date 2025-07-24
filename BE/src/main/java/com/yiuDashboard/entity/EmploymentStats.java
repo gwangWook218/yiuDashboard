@@ -34,9 +34,15 @@ public class EmploymentStats {
     @Column(nullable = false)
     private double employmentRate;
 
-    /**
-     * 취업률 자동 계산용 편의 메서드
-     */
+    // 졸업생 진출 분야
+    @Column(nullable = false, length = 100)
+    private String careerField;
+
+    // 해당 분야로 진출한 비율
+    @Column(nullable = false)
+    private double careerFieldRate;
+
+    //취업률 자동 계산용 편의 메서드
     public void calculateEmploymentRate() {
         if (graduates > 0) {
             this.employmentRate = ((double) employed / graduates) * 100.0;

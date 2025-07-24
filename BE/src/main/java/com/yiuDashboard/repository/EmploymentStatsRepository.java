@@ -17,4 +17,8 @@ public interface EmploymentStatsRepository extends JpaRepository<EmploymentStats
     //취업률이 특정 값 이상인 학과 조회
     @Query("SELECT e FROM EmploymentStats e WHERE e.employmentRate >= :rate")
     List<EmploymentStats> findByEmploymentRateGreaterThanEqual(@Param("rate") double rate);
+
+    //특정 학과의 졸업생 진출 분야별 비율 조회
+    List<EmploymentStats> findByDepartmentNameOrderByCareerFieldRateDesc(String departmentName);
+
 }
