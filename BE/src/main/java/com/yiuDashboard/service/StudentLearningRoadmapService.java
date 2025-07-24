@@ -63,4 +63,32 @@ public class StudentLearningRoadmapService {
 
         return earnedCredits >= requiredCredits;  // boolean만 반환
     }
+    // 자신의 성취도 상대적 위치 계산
+    public String compareGraduatePerformance(String studentId) {
+        StudentLearningRoadmap roadmap = roadmapRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("학생 데이터를 찾을 수 없습니다."));
+
+        Double myGpa = roadmap.getCurrentGpa();
+        if (myGpa == null) {
+            return "학생의 현재 GPA 데이터가 없습니다.";
+        }
+
+        // 전체 GPA 데이터 가져오기
+        List<Double> allGpas = roadmapRepository.findAllGraduatesGpa();
+
+        if (allGpas.isEmpty()) {
+            return "졸업생 GPA 데이터가 없습니다.";
+        }
+
+        double averageGpa = allGpas.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+
+        // 상대적 위치 메시지 반환
+        if (myGpa > averageGpa) {
+            return String.format("당신의 GPA(%.2f)는 졸업생 평균(%.2f)보다 높습니다.", myGpa, averageGpa);
+        } else if (myGpa.equals(averageGpa)) {
+            return String.format("당신의 GPA(%.2f)는 졸업생 평균과 동일합니다.", myGpa);
+        } else {
+            return String.format("당신의 GPA(%.2f)는 졸업생 평균(%.2f)보다 낮습니다.", myGpa, averageGpa);
+        }
+    }
 }
