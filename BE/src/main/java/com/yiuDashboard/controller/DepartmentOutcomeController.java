@@ -49,4 +49,18 @@ public class DepartmentOutcomeController {
         List<DepartmentOutcome> outcomes = departmentOutcomeService.getAllDepartmentsByGradeDifferenceDesc();
         return ResponseEntity.ok(outcomes);
     }
+
+    // 특정 학과 졸업생 진로 통계 (취업률, 진학률) 조회
+    @GetMapping("/career-statistics")
+    public ResponseEntity<List<DepartmentOutcome>> getCareerStatisticsByDepartment(@RequestParam String name) {
+        List<DepartmentOutcome> outcomes = departmentOutcomeService.getCareerStatisticsByDepartment(name);
+        return ResponseEntity.ok(outcomes);
+    }
+
+    // 전체 학과 졸업생 진로 통계 (취업률 - 진학률 차이 기준 내림차순 정렬)
+    @GetMapping("/career-statistics/sorted")
+    public ResponseEntity<List<DepartmentOutcome>> getAllDepartmentsByCareerDifferenceDesc() {
+        List<DepartmentOutcome> outcomes = departmentOutcomeService.getAllDepartmentsByCareerDifferenceDesc();
+        return ResponseEntity.ok(outcomes);
+    }
 }

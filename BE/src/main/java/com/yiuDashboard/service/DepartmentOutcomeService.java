@@ -37,4 +37,14 @@ public class DepartmentOutcomeService {
     public List<DepartmentOutcome> getAllDepartmentsByGradeDifferenceDesc() {
         return departmentOutcomeRepository.findAllByOrderByMajorVsGeneralDifferenceDesc();
     }
+
+    // 특정 학과 졸업생 진로 통계(취업률, 진학률) 조회
+    public List<DepartmentOutcome> getCareerStatisticsByDepartment(String departmentName) {
+        return departmentOutcomeRepository.findByDepartmentNameOrderByEmploymentRateDesc(departmentName);
+    }
+
+    // 전체 학과 졸업생 진로 통계(취업률 기준 내림차순 정렬)
+    public List<DepartmentOutcome> getAllDepartmentsByCareerDifferenceDesc() {
+        return departmentOutcomeRepository.findAllByOrderByEmploymentRateDesc();
+    }
 }
