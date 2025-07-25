@@ -21,4 +21,10 @@ public interface FacultyConditionRepository extends JpaRepository<FacultyConditi
     // 특정 학과 전임교원 1인당 학생 수 내림차순 조회
     List<FacultyCondition> findByDepartmentNameOrderByStudentPerFacultyDesc(String departmentName);
 
+    // 특정 학과 강의 담당 비율 조회
+    List<FacultyCondition> findByDepartmentNameOrderByLectureChargeRatioDesc(String departmentName);
+
+    // 전체 학과 강의 담당 비율 조회
+    List<FacultyCondition> findAllByOrderByLectureChargeRatioDesc();
+
 }

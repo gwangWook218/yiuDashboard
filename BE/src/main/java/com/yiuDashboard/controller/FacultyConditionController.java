@@ -42,4 +42,18 @@ public class FacultyConditionController {
         List<FacultyCondition> results = facultyConditionService.getAllDepartmentsByStudentPerFacultyDesc();
         return ResponseEntity.ok(results);
     }
+
+    // 특정 학과 강의 담당 비율 조회
+    @GetMapping("/lecture-charge-ratio")
+    public ResponseEntity<List<FacultyCondition>> getLectureChargeRatioByDepartment(@RequestParam String name) {
+        List<FacultyCondition> results = facultyConditionService.getLectureChargeRatioByDepartment(name);
+        return ResponseEntity.ok(results);
+    }
+
+    // 전체 학과 강의 담당 비율 조회
+    @GetMapping("/lecture-charge-ratio/sorted")
+    public ResponseEntity<List<FacultyCondition>> getAllDepartmentsByLectureChargeRatioDesc() {
+        List<FacultyCondition> results = facultyConditionService.getAllDepartmentsByLectureChargeRatioDesc();
+        return ResponseEntity.ok(results);
+    }
 }

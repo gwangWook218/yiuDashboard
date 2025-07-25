@@ -32,4 +32,14 @@ public class FacultyConditionService {
     public List<FacultyCondition> getAllDepartmentsByStudentPerFacultyDesc() {
         return facultyConditionRepository.findAllByOrderByStudentPerFacultyDesc();
     }
+
+    // 특정 학과의 강의 담당 비율 조회
+    public List<FacultyCondition> getLectureChargeRatioByDepartment(String departmentName) {
+        return facultyConditionRepository.findByDepartmentNameOrderByLectureChargeRatioDesc(departmentName);
+    }
+
+    // 전체 학과 강의 담당 비율 조회
+    public List<FacultyCondition> getAllDepartmentsByLectureChargeRatioDesc() {
+        return facultyConditionRepository.findAllByOrderByLectureChargeRatioDesc();
+    }
 }

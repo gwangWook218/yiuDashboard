@@ -42,6 +42,10 @@ public class FacultyCondition {
     @Column(nullable = false)
     private double studentPerFaculty;
 
+    // 강의 담당 비율 (교수 1인의 강의 비중 확인)
+    @Column(nullable = false)
+    private double lectureChargeRatio;
+
     // 데이터 업데이트 메서드 (관리자용)
     public void updateFacultyStudentData(String departmentName, int fullTimeFacultyCount, int studentCount) {
         this.departmentName = departmentName;
@@ -57,5 +61,12 @@ public class FacultyCondition {
         this.recommendedFacultyCount = recommendedFacultyCount;
         this.facultySecureRate = (recommendedFacultyCount == 0) ? 0 :
                 ((double) fullTimeFacultyCount / recommendedFacultyCount) * 100;
+    }
+
+    // 강의 담당 비율 업데이트 (관리자용)
+    public void updateLectureChargeRatio(String departmentName, int fullTimeFacultyCount, int totalLectureCount) {
+        this.departmentName = departmentName;
+        this.fullTimeFacultyCount = fullTimeFacultyCount;
+        this.lectureChargeRatio = (fullTimeFacultyCount == 0) ? 0 : (double) totalLectureCount / fullTimeFacultyCount;
     }
 }
