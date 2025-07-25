@@ -30,6 +30,18 @@ public class ResearchPerformance {
     @Column(nullable = false)
     private Long avgResearchGrantPerProfessor;
 
+    // 전국 평균 값
+    @Column(nullable = true)
+    private Double nationalAverage;
+
+    // 계열별 평균 값
+    @Column(nullable = true)
+    private Double categoryAverage;
+
+    // 목표 대학 값 (선택적으로 비교)
+    @Column(nullable = true)
+    private Double targetUniversityValue;
+
     // 통계 기준 연도
     @Column(nullable = false)
     private int year;

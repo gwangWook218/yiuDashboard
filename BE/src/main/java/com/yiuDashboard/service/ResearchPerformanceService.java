@@ -27,4 +27,14 @@ public class ResearchPerformanceService {
     public List<ResearchPerformance> getAllResearchPerformances() {
         return researchPerformanceRepository.findAll();
     }
+
+    // 특정 연도, 전체 학과 경쟁력 평가 데이터 조회
+    public List<ResearchPerformance> getCompetitivenessEvaluationByYear(int year) {
+        return researchPerformanceRepository.findAllByYear(year);
+    }
+
+    // 특정 연도, 특정 학과 경쟁력 평가 데이터 조회
+    public List<ResearchPerformance> getCompetitivenessEvaluation(String departmentName, int year) {
+        return researchPerformanceRepository.findByDepartmentNameAndYear(departmentName, year);
+    }
 }

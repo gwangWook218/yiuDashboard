@@ -14,4 +14,10 @@ public interface ResearchPerformanceRepository extends JpaRepository<ResearchPer
 
     //학과별 연구비 수혜 실적 조회
     List<ResearchPerformance> findByDepartmentName(String departmentName);
+
+    // 특정 연도, 전체 학과 경쟁력 평가 데이터 조회
+    List<ResearchPerformance> findAllByYear(int year);
+
+    // 특정 연도, 특정 학과 경쟁력 평가 데이터 조회
+    List<ResearchPerformance> findByDepartmentNameAndYear(String departmentName, int year);
 }

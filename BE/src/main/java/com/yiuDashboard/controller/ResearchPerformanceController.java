@@ -35,4 +35,23 @@ public class ResearchPerformanceController {
         List<ResearchPerformance> performances = researchPerformanceService.getAllResearchPerformances();
         return ResponseEntity.ok(performances);
     }
+
+    // 특정 연도, 전체 학과 경쟁력 평가
+    @GetMapping("/competitiveness/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getCompetitivenessEvaluationByYear(
+            @PathVariable int year) {
+        List<ResearchPerformance> data =
+                researchPerformanceService.getCompetitivenessEvaluationByYear(year);
+        return ResponseEntity.ok(data);
+    }
+
+    // 특정 연도, 특정 학과 경쟁력 평가
+    @GetMapping("/competitiveness/{departmentName}/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getCompetitivenessEvaluation(
+            @PathVariable String departmentName,
+            @PathVariable int year) {
+        List<ResearchPerformance> data =
+                researchPerformanceService.getCompetitivenessEvaluation(departmentName, year);
+        return ResponseEntity.ok(data);
+    }
 }
