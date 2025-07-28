@@ -1,22 +1,26 @@
 package com.yiuDashboard.controller;
 
 import com.yiuDashboard.dto.AdmissionRateDTO;
+import com.yiuDashboard.dto.DepartmentEnrollmentDto;
 import com.yiuDashboard.service.AdminService;
+import com.yiuDashboard.service.EnrollmentService;
 import com.yiuDashboard.service.GraduateAdmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/faculty")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
     private final GraduateAdmissionService admissionService;
+    private final EnrollmentService enrollmentService;
 
     @GetMapping("/ensure/compare")
     public String getComparisonFullTimeFacultyEnsureCrntSt(@Param("year") int year, @Param("indctId") int indctId, Authentication authentication) {
@@ -76,5 +80,55 @@ public class AdminController {
     @GetMapping("graduater/employ")
     public String getNoticeGraduateEmploymentRate(@Param("year") int year, Authentication authentication) {
         return adminService.getNoticeGraduateEmploymentRate(year).block();
+    }
+
+    @GetMapping("dropout/compare")
+    public String getComparisonDropOutStudentCrntSt(@Param("year") int year, Authentication authentication) {
+        return adminService.getComparisonDropOutStudentCrntSt(year).block();
+    }
+
+    @GetMapping("dropout/region")
+    public String getRegionalDropOutStudentCrntSt(Authentication authentication) {
+        return adminService.getRegionalDropOutStudentCrntSt().block();
+    }
+
+    @GetMapping("dropout/notice")
+    public String getNoticeStudentsWastageRate(@Param("year") int year, Authentication authentication) {
+        return adminService.getNoticeStudentsWastageRate(year).block();
+    }
+
+    @GetMapping("/enrollment/compare")
+    public ResponseEntity<List<DepartmentEnrollmentDto>> getDepartmentEnrollmentStats() {
+        return ResponseEntity.ok(enrollmentService.getDepartmentEnrollmentStats());
+    }
+
+    @GetMapping("scholarship/per/compare")
+    public String getComparisonScholarshipBenefitCrntSt(@Param("year") int year, Authentication authentication) {
+        return adminService.getComparisonScholarshipBenefitCrntSt(year).block();
+    }
+
+    @GetMapping("scholarship/per/region")
+    public String getRegionalScholarshipBenefitCrntSt(Authentication authentication) {
+        return adminService.getRegionalScholarshipBenefitCrntSt().block();
+    }
+
+    @GetMapping("eduCost/per/compare")
+    public String getComparisonEducationalExpensesReductionCrntSt(@Param("year") int year, Authentication authentication) {
+        return adminService.getComparisonEducationalExpensesReductionCrntSt(year).block();
+    }
+
+    @GetMapping("eduCost/per/region")
+    public String getRegionalEducationalExpensesReductionCrntSt(Authentication authentication) {
+        return adminService.getRegionalEducationalExpensesReductionCrntSt().block();
+    }
+
+    @GetMapping("dormitory/compare")
+    public String getComparisonDormitoryAcceptanceCrntSt(@Param("year") int year, Authentication authentication) {
+        return adminService.getComparisonDormitoryAcceptanceCrntSt(year).block();
+    }
+
+    @GetMapping("dormitory/region")
+    public String getRegionalDormitoryAcceptanceCrntSt(Authentication authentication) {
+        return adminService.getRegionalDormitoryAcceptanceCrntSt().block();
     }
 }

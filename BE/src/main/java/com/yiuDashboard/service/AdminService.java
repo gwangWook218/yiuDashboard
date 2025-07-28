@@ -152,4 +152,108 @@ public class AdminService {
                 .retrieve()
                 .bodyToMono(String.class);
     }
+
+    public Mono<String> getComparisonDropOutStudentCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/StudentService/getComparisonDropOutStudentCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getRegionalDropOutStudentCrntSt() {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/StudentService/getRegionalDropOutStudentCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlDivCd", schlDivCd)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getNoticeStudentsWastageRate(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/StudentService/getNoticeStudentsWastageRate")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getComparisonScholarshipBenefitCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/FinancesService/getComparisonScholarshipBenefitCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getRegionalScholarshipBenefitCrntSt() {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/FinancesService/getRegionalScholarshipBenefitCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlDivCd", schlDivCd)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getComparisonEducationalExpensesReductionCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/FinancesService/getComparisonEducationalExpensesReductionCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getRegionalEducationalExpensesReductionCrntSt() {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/FinancesService/getRegionalEducationalExpensesReductionCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlDivCd", schlDivCd)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getComparisonDormitoryAcceptanceCrntSt(int year) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/EducationConditionService/getComparisonDormitoryAcceptanceCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", schoolId)
+                        .queryParam("svyYr", year)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    public Mono<String> getRegionalDormitoryAcceptanceCrntSt() {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/EducationConditionService/getRegionalDormitoryAcceptanceCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlDivCd", schlDivCd)
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class);
+    }
 }
