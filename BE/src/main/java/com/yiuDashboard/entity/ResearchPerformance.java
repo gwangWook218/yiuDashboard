@@ -45,4 +45,20 @@ public class ResearchPerformance {
     // 통계 기준 연도
     @Column(nullable = false)
     private int year;
+
+    // 논문 실적
+    @Column(nullable = true)
+    private Integer paperCount;
+
+    // 특허 출원 수
+    @Column(nullable = true)
+    private Integer patentCount;
+
+    // 목표 대학 논문 실적 (선택 비교)
+    @Column(nullable = true)
+    private Integer targetUniversityPaperCount;
+
+    // 목표 대학 특허 출원 수 (선택 비교)
+    @Column(nullable = true)
+    private Integer targetUniversityPatentCount;
 }

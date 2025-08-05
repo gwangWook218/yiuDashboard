@@ -13,28 +13,27 @@ public class ResearchPerformanceService {
 
     private final ResearchPerformanceRepository researchPerformanceRepository;
 
-    //특정 연도의 전체 연구비 수혜 실적 조회
-    public List<ResearchPerformance> getResearchPerformanceByYear(int year) {
-        return researchPerformanceRepository.findByYear(year);
+    // 연구비 수혜 실적
+    public List<ResearchPerformance> getResearchGrantByYear(int year) {
+        return researchPerformanceRepository.findResearchGrantByYear(year);
+    }
+    public List<ResearchPerformance> getResearchGrantByDepartment(String departmentName, int year) {
+        return researchPerformanceRepository.findResearchGrantByDepartmentNameAndYear(departmentName, year);
     }
 
-    //특정 학과의 연구비 수혜 실적 조회
-    public List<ResearchPerformance> getResearchPerformanceByDepartment(String departmentName) {
-        return researchPerformanceRepository.findByDepartmentName(departmentName);
-    }
-
-    //모든 연구비 수혜 실적 조회
-    public List<ResearchPerformance> getAllResearchPerformances() {
-        return researchPerformanceRepository.findAll();
-    }
-
-    // 특정 연도, 전체 학과 경쟁력 평가 데이터 조회
+    // 경쟁력 및 유치 능력 평가
     public List<ResearchPerformance> getCompetitivenessEvaluationByYear(int year) {
-        return researchPerformanceRepository.findAllByYear(year);
+        return researchPerformanceRepository.findCompetitivenessByYear(year);
+    }
+    public List<ResearchPerformance> getCompetitivenessEvaluation(String departmentName, int year) {
+        return researchPerformanceRepository.findCompetitivenessByDepartmentNameAndYear(departmentName, year);
     }
 
-    // 특정 연도, 특정 학과 경쟁력 평가 데이터 조회
-    public List<ResearchPerformance> getCompetitivenessEvaluation(String departmentName, int year) {
-        return researchPerformanceRepository.findByDepartmentNameAndYear(departmentName, year);
+    // 논문 실적·특허 출원 수
+    public List<ResearchPerformance> getResearchOutputByYear(int year) {
+        return researchPerformanceRepository.findResearchOutputByYear(year);
+    }
+    public List<ResearchPerformance> getResearchOutputByDepartment(String departmentName, int year) {
+        return researchPerformanceRepository.findResearchOutputByDepartmentNameAndYear(departmentName, year);
     }
 }

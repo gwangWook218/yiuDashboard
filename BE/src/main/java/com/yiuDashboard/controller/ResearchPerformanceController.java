@@ -54,4 +54,21 @@ public class ResearchPerformanceController {
                 researchPerformanceService.getCompetitivenessEvaluation(departmentName, year);
         return ResponseEntity.ok(data);
     }
+
+    // 특정 연도 전체 학과 논문·특허 실적 조회
+    @GetMapping("/papers/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getResearchPapersByYear(@PathVariable int year) {
+        List<ResearchPerformance> data = researchPerformanceService.getResearchPapersByYear(year);
+        return ResponseEntity.ok(data);
+    }
+
+    // 특정 학과 + 연도 기준 논문·특허 실적 조회
+    @GetMapping("/papers/{departmentName}/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getResearchPapersByDepartmentAndYear(
+            @PathVariable String departmentName,
+            @PathVariable int year) {
+        List<ResearchPerformance> data =
+                researchPerformanceService.getResearchPapersByDepartmentAndYear(departmentName, year);
+        return ResponseEntity.ok(data);
+    }
 }
