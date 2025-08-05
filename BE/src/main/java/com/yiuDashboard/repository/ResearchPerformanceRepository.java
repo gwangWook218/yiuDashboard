@@ -9,9 +9,24 @@ import java.util.List;
 @Repository
 public interface ResearchPerformanceRepository extends JpaRepository<ResearchPerformance, Long> {
 
-    //특정 연도의 연구비 수혜 실적 조회
+    /**
+     * 학과별 연구비 수혜 실적 조회
+     */
+    List<ResearchPerformance> findByDepartmentName(String departmentName);
+
+    /**
+     * 특정 교수 연구비 수혜 실적 조회
+     */
+    List<ResearchPerformance> findByProfessorName(String professorName);
+
+    /**
+     * 연도별 연구비 수혜 실적 조회
+     */
     List<ResearchPerformance> findByYear(int year);
 
-    //학과별 연구비 수혜 실적 조회
-    List<ResearchPerformance> findByDepartmentName(String departmentName);
+    /**
+     * 학과 + 연도별 연구비 수혜 실적 조회
+     */
+    List<ResearchPerformance> findByDepartmentNameAndYear(String departmentName, int year);
 }
+
