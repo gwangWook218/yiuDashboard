@@ -2,7 +2,6 @@ package com.yiuDashboard.controller;
 
 import com.yiuDashboard.entity.ResearchPerformance;
 import com.yiuDashboard.service.ResearchPerformanceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,48 +9,81 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/research-performance")
-@RequiredArgsConstructor
 public class ResearchPerformanceController {
 
     private final ResearchPerformanceService researchPerformanceService;
 
-    //특정 연도의 연구비 수혜 실적 조회
-    @GetMapping("/year/{year}")
-    public ResponseEntity<List<ResearchPerformance>> getResearchPerformanceByYear(@PathVariable int year) {
-        List<ResearchPerformance> performances = researchPerformanceService.getResearchPerformanceByYear(year);
-        return ResponseEntity.ok(performances);
+    public ResearchPerformanceController(ResearchPerformanceService researchPerformanceService) {
+        this.researchPerformanceService = researchPerformanceService;
     }
 
-    //특정 학과의 연구비 수혜 실적 조회
-    @GetMapping("/department/{departmentName}")
-    public ResponseEntity<List<ResearchPerformance>> getResearchPerformanceByDepartment(@PathVariable String departmentName) {
-        List<ResearchPerformance> performances = researchPerformanceService.getResearchPerformanceByDepartment(departmentName);
-        return ResponseEntity.ok(performances);
-    }
-
-    //전체 연구비 수혜 실적 조회
-    @GetMapping("/all")
+    /**
+     * 전체 연구비 수혜 실적 조회
+     */
+    @GetMapping
     public ResponseEntity<List<ResearchPerformance>> getAllResearchPerformances() {
-        List<ResearchPerformance> performances = researchPerformanceService.getAllResearchPerformances();
-        return ResponseEntity.ok(performances);
+        return ResponseEntity.ok(researchPerformanceService.getAllResearchPerformances());
     }
 
-    // 특정 연도, 전체 학과 경쟁력 평가
-    @GetMapping("/competitiveness/{year}")
-    public ResponseEntity<List<ResearchPerformance>> getCompetitivenessEvaluationByYear(
-            @PathVariable int year) {
-        List<ResearchPerformance> data =
-                researchPerformanceService.getCompetitivenessEvaluationByYear(year);
-        return ResponseEntity.ok(data);
+    /**
+     * 학과별 연구비 수혜 실적 조회
+     */
+    @GetMapping("/department/{departmentName}")
+    public ResponseEntity<List<ResearchPerformance>> getByDepartmentName(@PathVariable String departmentName) {
+        return ResponseEntity.ok(researchPerformanceService.getByDepartmentName(departmentName));
     }
 
-    // 특정 연도, 특정 학과 경쟁력 평가
-    @GetMapping("/competitiveness/{departmentName}/{year}")
-    public ResponseEntity<List<ResearchPerformance>> getCompetitivenessEvaluation(
+    /**
+     * 교수별 연구비 수혜 실적 조회
+     */
+    @GetMapping("/professor/{professorName}")
+    public ResponseEntity<List<ResearchPerformance>> getByProfessorName(@PathVariable String professorName) {
+        return ResponseEntity.ok(researchPerformanceService.getByProfessorName(professorName));
+    }
+
+    /**
+     * 연도별 연구비 수혜 실적 조회
+     */
+    @GetMapping("/year/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getByYear(@PathVariable int year) {
+        return ResponseEntity.ok(researchPerformanceService.getByYear(year));
+    }
+
+    /**
+     * 학과 + 연도별 연구비 수혜 실적 조회
+     */
+    @GetMapping("/department/{departmentName}/year/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getByDepartmentNameAndYear(
             @PathVariable String departmentName,
             @PathVariable int year) {
-        List<ResearchPerformance> data =
-                researchPerformanceService.getCompetitivenessEvaluation(departmentName, year);
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(researchPerformanceService.getByDepartmentNameAndYear(departmentName, year));
+    }
+
+    /**
+     * 전국 평균 지표 데이터 조회
+     */
+    @GetMapping("/competitiveness/national/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getNationalAverageByYear(@PathVariable int year) {
+        return ResponseEntity.ok(researchPerformanceService.getNationalAverageByYear(year));
+    }
+
+    /**
+     * 계열별 평균 지표 데이터 조회
+     */
+    @GetMapping("/competitiveness/category/{categoryName}/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getCategoryAverageByYear(
+            @PathVariable String categoryName,
+            @PathVariable int year) {
+        return ResponseEntity.ok(researchPerformanceService.getCategoryAverageByYear(categoryName, year));
+    }
+
+    /**
+     * 목표대학 비교 데이터 조회
+     */
+    @GetMapping("/competitiveness/target/{universityName}/{year}")
+    public ResponseEntity<List<ResearchPerformance>> getTargetUniversityValueByYear(
+            @PathVariable String universityName,
+            @PathVariable int year) {
+        return ResponseEntity.ok(researchPerformanceService.getTargetUniversityValueByYear(universityName, year));
     }
 }
