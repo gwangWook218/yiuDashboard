@@ -2,63 +2,76 @@ package com.yiuDashboard.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "research_performance")
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResearchPerformance {
 
+    /** 기본키 */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 학과명
-    @Column(nullable = false)
+    /** 학과명 */
+    @Column(nullable = false, length = 100)
     private String departmentName;
 
-    // 해당 학과 연구비 수혜 총액
-    @Column(nullable = false)
-    private Long totalResearchGrant;
+    /** 교수명 (교수별 데이터 관리 필요시) */
+    @Column(nullable = false, length = 100)
+    private String professorName;
 
-    // 교수 1인당 평균 연구비 수혜액
-    @Column(nullable = false)
-    private Long avgResearchGrantPerProfessor;
-
-    // 전국 평균 값
-    @Column(nullable = true)
-    private Double nationalAverage;
-
-    // 계열별 평균 값
-    @Column(nullable = true)
-    private Double categoryAverage;
-
-    // 목표 대학 값 (선택적으로 비교)
-    @Column(nullable = true)
-    private Double targetUniversityValue;
-
-    // 통계 기준 연도
+    /** 연도 */
     @Column(nullable = false)
     private int year;
 
-    // 논문 실적
-    @Column(nullable = true)
+    /** 연구비 금액 */
+    @Column(nullable = false)
+    private Long researchGrantAmount;
+
+    /** 연구비 출처 */
+    @Column(length = 100)
+    private String fundingSource;
+
+    /** 등록 일시 */
+    @Column(nullable = false)
+    private String createdAt;
+
+    /** 수정 일시 */
+    @Column(nullable = false)
+    private String updatedAt;
+
+    /** 전국 평균 값 */
+    @Column
+    private Double nationalAverage;
+
+    /** 계열별 평균 값 */
+    @Column
+    private Double categoryAverage;
+
+    /** 목표 대학 값(선택) */
+    @Column
+    private Double targetUniversityValue;
+
+    /** 대학명 */
+    @Column(length = 100)
+    private String universityName;
+
+    /** 계열명 */
+    @Column(length = 100)
+    private String categoryName;
+
+    /** 논문 실적 */
+    @Column
     private Integer paperCount;
 
-    // 특허 출원 수
-    @Column(nullable = true)
+    /** 특허 출원 수 */
+    @Column
     private Integer patentCount;
-
-    // 목표 대학 논문 실적 (선택 비교)
-    @Column(nullable = true)
-    private Integer targetUniversityPaperCount;
-
-    // 목표 대학 특허 출원 수 (선택 비교)
-    @Column(nullable = true)
-    private Integer targetUniversityPatentCount;
 }
