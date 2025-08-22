@@ -1,7 +1,7 @@
 package com.yiuDashboard.controller;
 
 import com.yiuDashboard.dto.AdmissionRateDTO;
-import com.yiuDashboard.dto.DepartmentEnrollmentDto;
+import com.yiuDashboard.dto.EnrollmentSummaryDto;
 import com.yiuDashboard.service.AdminService;
 import com.yiuDashboard.service.EnrollmentService;
 import com.yiuDashboard.service.GraduateAdmissionService;
@@ -97,9 +97,9 @@ public class AdminController {
         return adminService.getNoticeStudentsWastageRate(year).block();
     }
 
-    @GetMapping("/enrollment/compare")
-    public ResponseEntity<List<DepartmentEnrollmentDto>> getDepartmentEnrollmentStats() {
-        return ResponseEntity.ok(enrollmentService.getDepartmentEnrollmentStats());
+    @GetMapping("/enrollment/summary")
+    public ResponseEntity<List<EnrollmentSummaryDto>> getSummary(Authentication authentication) {
+        return ResponseEntity.ok(enrollmentService.getEnrollmentSummary());
     }
 
     @GetMapping("scholarship/per/compare")
