@@ -1,19 +1,20 @@
 package com.yiuDashboard.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class AdmissionRateDTO {
+//    졸업생 진학률
     private int year;
-    private long totalGraduates;
-    private long totalAdmissions;
-    private double admissionRate;
+    private Long totalGraduates;
+    private Long totalAdmissions;
+    private Double admissionRate;
 
-    public AdmissionRateDTO(int year, long totalGraduates, long totalAdmissions) {
+    public AdmissionRateDTO(int year, Long totalGraduates, Long totalAdmissions, Double admissionRate) {
         this.year = year;
         this.totalGraduates = totalGraduates;
         this.totalAdmissions = totalAdmissions;
-        this.admissionRate = totalGraduates == 0 ? 0 : Math.round(((double) totalAdmissions / totalGraduates) * 1000) / 10.0;
+        this.admissionRate = admissionRate;
     }
 
 }

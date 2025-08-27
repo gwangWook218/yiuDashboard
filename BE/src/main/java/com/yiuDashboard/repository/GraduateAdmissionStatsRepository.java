@@ -24,11 +24,18 @@ public interface GraduateAdmissionStatsRepository extends JpaRepository<Graduate
                     g.overseasKorJrCollegeMale + g.overseasKorJrCollegeFemale +
                     g.overseasCollegeMale + g.overseasCollegeFemale +
                     g.overseasGradMale + g.overseasGradFemale
-                )
+                ),
+                ROUND(SUM(
+                    g.domesticKorJrCollegeMale + g.domesticKorJrCollegeFemale +
+                    g.domesticCollegeMale + g.domesticCollegeFemale +
+                    g.domesticGradMale + g.domesticGradFemale +
+                    g.overseasKorJrCollegeMale + g.overseasKorJrCollegeFemale +
+                    g.overseasCollegeMale + g.overseasCollegeFemale +
+                    g.overseasGradMale + g.overseasGradFemale
+                )/SUM(g.graduatesMale + g.graduatesFemale)*100.0, 1)
             )
             FROM GraduateAdmissionStats g
             WHERE g.id.year=:year
-            GROUP BY g.id.year
     """)
     List<AdmissionRateDTO> findAdmissionRateByYear(@Param("year") int year);
 }

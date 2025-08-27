@@ -12,7 +12,7 @@ import java.util.List;
 public class EnrollmentService {
     private final StudentEnrollmentStatusRepository repository;
 
-    public List<EnrollmentSummaryDto> getEnrollmentSummary() {
-        return repository.findEnrollmentSummary();
+    public List<EnrollmentSummaryDto> findByYear(int year) {
+        return repository.findByYear(year);
     }
 }

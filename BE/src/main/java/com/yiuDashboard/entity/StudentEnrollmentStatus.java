@@ -24,6 +24,7 @@ public class StudentEnrollmentStatus {
     private Integer enrolledOutFemale;
 
     @ManyToOne
-    @JoinColumn(name = "dept_id")
+    @MapsId("departmentId")
+    @JoinColumn(name = "department_id", referencedColumnName = "dept_id")
     private Department department;
 }

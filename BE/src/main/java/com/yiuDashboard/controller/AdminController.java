@@ -1,13 +1,14 @@
 package com.yiuDashboard.controller;
 
 import com.yiuDashboard.dto.AdmissionRateDTO;
+import com.yiuDashboard.dto.EmploymentRateDTO;
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
 import com.yiuDashboard.service.AdminService;
+import com.yiuDashboard.service.EmploymentRateService;
 import com.yiuDashboard.service.EnrollmentService;
 import com.yiuDashboard.service.GraduateAdmissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +22,28 @@ public class AdminController {
     private final AdminService adminService;
     private final GraduateAdmissionService admissionService;
     private final EnrollmentService enrollmentService;
+    private final EmploymentRateService employmentRateService;
 
+//    전임교원 확보 현황
+//    대학비교통계
     @GetMapping("/ensure/compare")
     public String getComparisonFullTimeFacultyEnsureCrntSt(@Param("year") int year, @Param("indctId") int indctId, Authentication authentication) {
         return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId).block();
     }
 
+//    지역별통계
     @GetMapping("/ensure/region")
     public String getRegionalFullTimeFacultyEnsureCrntSt(Authentication authentication) {
         return adminService.getRegionalFullTimeFacultyEnsureCrntSt().block();
     }
 
+//    우리대학경쟁력
     @GetMapping("/ensure/notice")
     public String getNoticeFullTimeFacultyEnsureRate(@Param("year") int year, Authentication authentication) {
         return adminService.getNoticeFullTimeFacultyEnsureRate(year).block();
     }
 
+//    전임교원 1인당 학생 수
     @GetMapping("/stdntNum/compare")
     public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(year).block();
@@ -47,6 +54,7 @@ public class AdminController {
         return adminService.getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent().block();
     }
 
+//    전임교원 강의담당비율
     @GetMapping("/lecRatio/compare")
     public String getComparisonLectureChargeRatio(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonLectureChargeRatio(year).block();
@@ -57,31 +65,36 @@ public class AdminController {
         return adminService.getRegionalLectureChargeRatio().block();
     }
 
+//    충원률(대학비교통계)
     @GetMapping("/enrolledStdnt/compare")
     public String getComparisonEnrolledStudentEnsureRate(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonEnrolledStudentEnsureRate(year).block();
     }
-
+//    입시 경쟁률(대학비교통계)
     @GetMapping("/freshCompetite/compare")
     public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate(year).block();
     }
 
+//    등록률(대학비교통계)
     @GetMapping("/register/compare")
     public String getComparisonEntranceModelLastRegistrationRatio(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonEntranceModelLastRegistrationRatio(year).block();
     }
 
+//    진학률
     @GetMapping("/graduater/admission")
-    public List<AdmissionRateDTO> getAdmission(@Param("year") int year) {
+    public List<AdmissionRateDTO> getAdmission(@Param("year") int year, Authentication authentication) {
         return admissionService.getAdmissionRate(year);
     }
 
+//    취업률
     @GetMapping("graduater/employ")
     public String getNoticeGraduateEmploymentRate(@Param("year") int year, Authentication authentication) {
         return adminService.getNoticeGraduateEmploymentRate(year).block();
     }
 
+//    중도탈락 학생비율
     @GetMapping("dropout/compare")
     public String getComparisonDropOutStudentCrntSt(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonDropOutStudentCrntSt(year).block();
@@ -97,11 +110,13 @@ public class AdminController {
         return adminService.getNoticeStudentsWastageRate(year).block();
     }
 
+//    학과별 재학생 수
     @GetMapping("/enrollment/summary")
-    public ResponseEntity<List<EnrollmentSummaryDto>> getSummary(Authentication authentication) {
-        return ResponseEntity.ok(enrollmentService.getEnrollmentSummary());
+    public List<EnrollmentSummaryDto> findByYear(@Param("year") int year, Authentication authentication) {
+        return enrollmentService.findByYear(year);
     }
 
+//    1인당 장학금 지급액
     @GetMapping("scholarship/per/compare")
     public String getComparisonScholarshipBenefitCrntSt(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonScholarshipBenefitCrntSt(year).block();
@@ -112,6 +127,7 @@ public class AdminController {
         return adminService.getRegionalScholarshipBenefitCrntSt().block();
     }
 
+//    등록률(대학비교통계)
     @GetMapping("eduCost/per/compare")
     public String getComparisonEducationalExpensesReductionCrntSt(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonEducationalExpensesReductionCrntSt(year).block();
@@ -122,6 +138,7 @@ public class AdminController {
         return adminService.getRegionalEducationalExpensesReductionCrntSt().block();
     }
 
+//    기숙사 수용률
     @GetMapping("dormitory/compare")
     public String getComparisonDormitoryAcceptanceCrntSt(@Param("year") int year, Authentication authentication) {
         return adminService.getComparisonDormitoryAcceptanceCrntSt(year).block();
@@ -130,5 +147,11 @@ public class AdminController {
     @GetMapping("dormitory/region")
     public String getRegionalDormitoryAcceptanceCrntSt(Authentication authentication) {
         return adminService.getRegionalDormitoryAcceptanceCrntSt().block();
+    }
+
+//    졸업생 취업률
+    @GetMapping("/employ")
+    public List<EmploymentRateDTO> findEmployRateByYear(@Param("year") int year) {
+        return employmentRateService.findEmployRateByYear(year);
     }
 }
