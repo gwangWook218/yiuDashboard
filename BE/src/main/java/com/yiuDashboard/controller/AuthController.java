@@ -87,15 +87,15 @@ public class AuthController {
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/me")
-    public String userInfo(Authentication auth) {
-        if (auth == null || !auth.isAuthenticated()) return "비로그인 상태입니다.";
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findByEmail(@RequestParam String email) {
+        String loginId = authService.findLoginIdByEmail(email);
 
-        // 인증 객체 정보 로그
-        System.out.println(">> Principal: " + auth.getPrincipal());
-        System.out.println(">> Authorities: " + auth.getAuthorities());
+        if (loginId == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("등록된 이메일이 없습니다");
+        }
 
-        User user = authService.getLoginUserById(auth.getName());
-        return "ID: " + user.getLoginId() + "\nrole: " + user.getRole();
+        return ResponseEntity.ok(loginId);
     }
 }

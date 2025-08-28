@@ -21,6 +21,7 @@ public class RegisterRequest {
     public User toEntity() {
         return User.builder()
                 .loginId(this.loginId)
+                .email(this.email)
                 .password(this.password)
                 .role(this.role)
                 .build();

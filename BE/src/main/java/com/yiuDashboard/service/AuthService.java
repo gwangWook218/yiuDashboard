@@ -49,4 +49,10 @@ public class AuthService {
         if (loginId == null) return null;
         return userRepository.findByLoginId(loginId);
     }
+
+    public String findLoginIdByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(User::getLoginId)
+                .orElse(null);
+    }
 }
