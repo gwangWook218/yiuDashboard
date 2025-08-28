@@ -27,8 +27,8 @@ public class AdminController {
 //    전임교원 확보 현황
 //    대학비교통계
     @GetMapping("/ensure/compare")
-    public String getComparisonFullTimeFacultyEnsureCrntSt(@Param("year") int year, @Param("indctId") int indctId, Authentication authentication) {
-        return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId).block();
+    public String getComparisonFullTimeFacultyEnsureCrntSt(@Param("year") int year, @Param("indctId") int indctId, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId, schlId).block();
     }
 
 //    지역별통계
@@ -39,14 +39,14 @@ public class AdminController {
 
 //    우리대학경쟁력
     @GetMapping("/ensure/notice")
-    public String getNoticeFullTimeFacultyEnsureRate(@Param("year") int year, Authentication authentication) {
-        return adminService.getNoticeFullTimeFacultyEnsureRate(year).block();
+    public String getNoticeFullTimeFacultyEnsureRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getNoticeFullTimeFacultyEnsureRate(year, schlId).block();
     }
 
 //    전임교원 1인당 학생 수
     @GetMapping("/stdntNum/compare")
-    public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(year).block();
+    public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(year, schlId).block();
     }
 
     @GetMapping("/stdntNum/region")
@@ -56,8 +56,8 @@ public class AdminController {
 
 //    전임교원 강의담당비율
     @GetMapping("/lecRatio/compare")
-    public String getComparisonLectureChargeRatio(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonLectureChargeRatio(year).block();
+    public String getComparisonLectureChargeRatio(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonLectureChargeRatio(year, schlId).block();
     }
 
     @GetMapping("/lecRatio/region")
@@ -67,19 +67,19 @@ public class AdminController {
 
 //    충원률(대학비교통계)
     @GetMapping("/enrolledStdnt/compare")
-    public String getComparisonEnrolledStudentEnsureRate(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonEnrolledStudentEnsureRate(year).block();
+    public String getComparisonEnrolledStudentEnsureRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonEnrolledStudentEnsureRate(year, schlId).block();
     }
 //    입시 경쟁률(대학비교통계)
     @GetMapping("/freshCompetite/compare")
-    public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate(year).block();
+    public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate(year, schlId).block();
     }
 
 //    등록률(대학비교통계)
     @GetMapping("/register/compare")
-    public String getComparisonEntranceModelLastRegistrationRatio(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonEntranceModelLastRegistrationRatio(year).block();
+    public String getComparisonEntranceModelLastRegistrationRatio(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonEntranceModelLastRegistrationRatio(year, schlId).block();
     }
 
 //    진학률
@@ -90,14 +90,14 @@ public class AdminController {
 
 //    취업률
     @GetMapping("graduater/employ")
-    public String getNoticeGraduateEmploymentRate(@Param("year") int year, Authentication authentication) {
-        return adminService.getNoticeGraduateEmploymentRate(year).block();
+    public String getNoticeGraduateEmploymentRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getNoticeGraduateEmploymentRate(year, schlId).block();
     }
 
 //    중도탈락 학생비율
     @GetMapping("dropout/compare")
-    public String getComparisonDropOutStudentCrntSt(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonDropOutStudentCrntSt(year).block();
+    public String getComparisonDropOutStudentCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonDropOutStudentCrntSt(year, schlId).block();
     }
 
     @GetMapping("dropout/region")
@@ -106,8 +106,8 @@ public class AdminController {
     }
 
     @GetMapping("dropout/notice")
-    public String getNoticeStudentsWastageRate(@Param("year") int year, Authentication authentication) {
-        return adminService.getNoticeStudentsWastageRate(year).block();
+    public String getNoticeStudentsWastageRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getNoticeStudentsWastageRate(year, schlId).block();
     }
 
 //    학과별 재학생 수
@@ -118,8 +118,8 @@ public class AdminController {
 
 //    1인당 장학금 지급액
     @GetMapping("scholarship/per/compare")
-    public String getComparisonScholarshipBenefitCrntSt(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonScholarshipBenefitCrntSt(year).block();
+    public String getComparisonScholarshipBenefitCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonScholarshipBenefitCrntSt(year, schlId).block();
     }
 
     @GetMapping("scholarship/per/region")
@@ -127,21 +127,21 @@ public class AdminController {
         return adminService.getRegionalScholarshipBenefitCrntSt().block();
     }
 
-//    등록률(대학비교통계)
-    @GetMapping("eduCost/per/compare")
-    public String getComparisonEducationalExpensesReductionCrntSt(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonEducationalExpensesReductionCrntSt(year).block();
+//    학생 1인당 교육비(대학비교통계)
+    @GetMapping("education/cost/compare")
+    public String getComparisonEducationalExpensesReductionCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonEducationalExpensesReductionCrntSt(year, schlId).block();
     }
 
-    @GetMapping("eduCost/per/region")
+    @GetMapping("education/cost/region")
     public String getRegionalEducationalExpensesReductionCrntSt(Authentication authentication) {
         return adminService.getRegionalEducationalExpensesReductionCrntSt().block();
     }
 
 //    기숙사 수용률
     @GetMapping("dormitory/compare")
-    public String getComparisonDormitoryAcceptanceCrntSt(@Param("year") int year, Authentication authentication) {
-        return adminService.getComparisonDormitoryAcceptanceCrntSt(year).block();
+    public String getComparisonDormitoryAcceptanceCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
+        return adminService.getComparisonDormitoryAcceptanceCrntSt(year, schlId).block();
     }
 
     @GetMapping("dormitory/region")
