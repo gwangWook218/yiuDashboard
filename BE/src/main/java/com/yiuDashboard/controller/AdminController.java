@@ -1,12 +1,10 @@
 package com.yiuDashboard.controller;
 
 import com.yiuDashboard.dto.AdmissionRateDTO;
+import com.yiuDashboard.dto.DropoutRateDTO;
 import com.yiuDashboard.dto.EmploymentRateDTO;
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
-import com.yiuDashboard.service.AdminService;
-import com.yiuDashboard.service.EmploymentRateService;
-import com.yiuDashboard.service.EnrollmentService;
-import com.yiuDashboard.service.GraduateAdmissionService;
+import com.yiuDashboard.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
@@ -23,6 +21,7 @@ public class AdminController {
     private final GraduateAdmissionService admissionService;
     private final EnrollmentService enrollmentService;
     private final EmploymentRateService employmentRateService;
+    private final DropoutRateService dropoutRateService;
 
 //    전임교원 확보 현황
 //    대학비교통계
@@ -108,6 +107,11 @@ public class AdminController {
     @GetMapping("dropout/notice")
     public String getNoticeStudentsWastageRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getNoticeStudentsWastageRate(year, schlId).block();
+    }
+
+    @GetMapping("dropout/dept")
+    public List<DropoutRateDTO> findByDeptName(@Param("year") String year, Authentication authentication) {
+        return dropoutRateService.findByDeptName(year);
     }
 
 //    학과별 재학생 수

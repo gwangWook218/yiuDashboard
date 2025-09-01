@@ -1,4 +1,4 @@
-package com.yiuDashboard.entity;
+package com.yiuDashboard.entity.gradEmployment;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

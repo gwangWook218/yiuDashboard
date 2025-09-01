@@ -1,8 +1,8 @@
 package com.yiuDashboard.repository;
 
 import com.yiuDashboard.dto.AdmissionRateDTO;
-import com.yiuDashboard.entity.GraduateAdmissionStats;
-import com.yiuDashboard.entity.GraduateAdmissionStatsId;
+import com.yiuDashboard.entity.gradAdmission.GraduateAdmissionStats;
+import com.yiuDashboard.entity.gradAdmission.GraduateAdmissionStatsId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

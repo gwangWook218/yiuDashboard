@@ -1,6 +1,5 @@
-package com.yiuDashboard.entity;
+package com.yiuDashboard.entity.enrollmentStatus;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,9 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class GraduateAdmissionStatsId implements Serializable {
-    @Column(name = "year")
+public class StudentEnrollmentStatusId implements Serializable {
     private Integer year;
-    @Column(name = "department_id")
     private Integer departmentId;
 }

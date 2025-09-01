@@ -1,4 +1,4 @@
-package com.yiuDashboard.entity;
+package com.yiuDashboard.entity.recruitmentRate;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

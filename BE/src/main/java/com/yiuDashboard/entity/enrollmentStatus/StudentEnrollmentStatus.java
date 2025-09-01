@@ -1,5 +1,6 @@
-package com.yiuDashboard.entity;
+package com.yiuDashboard.entity.enrollmentStatus;
 
+import com.yiuDashboard.entity.Department;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

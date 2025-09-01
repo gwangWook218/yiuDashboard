@@ -1,8 +1,8 @@
 package com.yiuDashboard.repository;
 
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
-import com.yiuDashboard.entity.StudentEnrollmentStatus;
-import com.yiuDashboard.entity.StudentEnrollmentStatusId;
+import com.yiuDashboard.entity.enrollmentStatus.StudentEnrollmentStatus;
+import com.yiuDashboard.entity.enrollmentStatus.StudentEnrollmentStatusId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

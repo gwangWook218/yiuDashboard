@@ -1,8 +1,8 @@
 package com.yiuDashboard.repository;
 
 import com.yiuDashboard.dto.EmploymentRateDTO;
-import com.yiuDashboard.entity.GraduateEmployment;
-import com.yiuDashboard.entity.GraduateEmploymentId;
+import com.yiuDashboard.entity.gradEmployment.GraduateEmployment;
+import com.yiuDashboard.entity.gradEmployment.GraduateEmploymentId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
