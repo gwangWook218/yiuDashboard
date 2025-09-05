@@ -2,8 +2,11 @@ package com.yiuDashboard.controller;
 
 import com.yiuDashboard.dto.AdmissionRateDTO;
 import com.yiuDashboard.dto.DropoutRateDTO;
-import com.yiuDashboard.dto.EmploymentRateDTO;
+import com.yiuDashboard.dto.gradEmployment.DepartmentEmploymentDTO;
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
+import com.yiuDashboard.dto.gradEmployment.EmploymentRankingDTO;
+import com.yiuDashboard.dto.gradEmployment.EmploymentRateResponseDTO;
+import com.yiuDashboard.dto.gradEmployment.EmploymentTrendDTO;
 import com.yiuDashboard.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -154,8 +157,18 @@ public class AdminController {
     }
 
 //    졸업생 취업률
-    @GetMapping("/employ")
-    public List<EmploymentRateDTO> findEmployRateByYear(@Param("year") int year) {
-        return employmentRateService.findEmployRateByYear(year);
+    @GetMapping("/employment-rates")
+    public EmploymentRateResponseDTO findEmployRateByYear(@RequestParam int year) {
+        return employmentRateService.getEmploymentRateByYear(year);
+    }
+
+    @GetMapping("/employment-rates/trend")
+    public EmploymentTrendDTO findTrendByYear(@RequestParam int departmentId) {
+        return employmentRateService.getTrendByYear(departmentId);
+    }
+
+    @GetMapping("/employment-rates/ranking")
+    public EmploymentRankingDTO getRanking(@RequestParam int year, @RequestParam(defaultValue = "5") int top) {
+        return employmentRateService.getRankByYear(year, top);
     }
 }

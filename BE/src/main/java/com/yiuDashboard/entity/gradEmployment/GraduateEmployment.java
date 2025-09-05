@@ -30,6 +30,7 @@ public class GraduateEmployment {
     private Integer excludedCases;
 
     @ManyToOne
-    @JoinColumn(name = "dept_id", referencedColumnName = "dept_id")
+    @MapsId("departmentId")
+    @JoinColumn(name = "department_id", referencedColumnName = "dept_id")
     private Department department;
 }
