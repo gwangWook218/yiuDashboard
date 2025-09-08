@@ -113,7 +113,7 @@ public class AdminController {
     }
 
     @GetMapping("dropout/dept")
-    public List<DropoutRateDTO> findByDeptName(@Param("year") String year, Authentication authentication) {
+    public List<DropoutRateDTO> findByDeptName(@Param("year") int year, Authentication authentication) {
         return dropoutRateService.findByDeptName(year);
     }
 

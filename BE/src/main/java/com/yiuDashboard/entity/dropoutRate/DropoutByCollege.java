@@ -1,8 +1,6 @@
 package com.yiuDashboard.entity.dropoutRate;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +16,9 @@ public class DropoutByCollege {
     private DropoutByCollegeId id;
 
     private Double percentage;
+
+    @ManyToOne
+    @MapsId("dropoutDeptId")
+    @JoinColumn(name = "dropout_dept_id", referencedColumnName = "dropout_dept_id")
+    private DropoutDepartment dropoutDepartment;
 }
