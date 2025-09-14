@@ -1,16 +1,12 @@
 package com.yiuDashboard.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "new_admission_stats")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class NewAdmissionStats {
 
     @Id
@@ -18,30 +14,45 @@ public class NewAdmissionStats {
     private Long id;
 
     @Column(nullable = false)
-    private String majorCategory;      // 계열명
+    private Integer year;
 
-    @Column(nullable = false)
-    private String departmentName;     // 학과명
+    @Column(name = "department_id", nullable = false)
+    private Integer departmentId;
 
-    @Column(nullable = false)
-    private int studentQuota;          // 모집 정원
+    @Column(name = "major_category", length = 100, nullable = false)
+    private String majorCategory;
 
-    @Column(nullable = false)
-    private int enrolledStudentCount;  // 재학생 수
+    @Column(name = "department_name", length = 255, nullable = false)
+    private String departmentName;
 
-    @Column
-    private double fillRate;           // 충원율
+    @Column(name = "student_quota", nullable = false)
+    private Integer studentQuota;
 
-    // 전국 평균 및 유사 계열 평균 비교용
-    @Column
-    private Double nationalAverageFillRate;  // 전국 평균 충원율
+    @Column(name = "enrolled_student_count", nullable = false)
+    private Integer enrolledStudentCount;
 
-    @Column
-    private Double similarMajorAverageFillRate; // 유사 계열 평균 충원율
+    @Column(name = "fill_rate")
+    private Double fillRate;
+
+    @Column(name = "national_average_fill_rate")
+    private Double nationalAverageFillRate;
+
+    @Column(name = "similar_major_average_fill_rate")
+    private Double similarMajorAverageFillRate;
 
     public double calculateFillRate() {
-        if (studentQuota == 0) return 0.0;
-        return ((double) enrolledStudentCount / studentQuota) * 100.0;
+        if (studentQuota == null || studentQuota == 0 || enrolledStudentCount == null) return 0.0;
+        double v = enrolledStudentCount * 100.0 / studentQuota;
+        return Math.round(v * 100.0) / 100.0;
+    }
+
+    @PostLoad
+    private void afterLoad() {
+        if (fillRate == null) fillRate = calculateFillRate();
+    }
+
+    @PrePersist @PreUpdate
+    private void beforeSave() {
+        fillRate = calculateFillRate();
     }
 }
-
