@@ -7,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/admission-stats")
@@ -23,16 +22,17 @@ public class NewAdmissionStatsController {
     }
 
     @GetMapping("/one")
-    public ResponseEntity<NewAdmissionStatsDto> getOne(@RequestParam int year,
-                                                       @RequestParam int deptId) {
+    public ResponseEntity<NewAdmissionStatsDto> getOne(
+            @RequestParam int year,
+            @RequestParam int deptId) {
         return ResponseEntity.ok(service.getOneDto(year, deptId));
     }
 
     @GetMapping("/fill-rate")
-    public ResponseEntity<Map<String, Object>> getFillRate(@RequestParam int year,
-                                                           @RequestParam int deptId) {
-        double rate = service.getFillRate(year, deptId);
-        return ResponseEntity.ok(Map.of("year", year, "deptId", deptId, "fillRate", rate));
+    public ResponseEntity<Double> getFillRate(
+            @RequestParam int year,
+            @RequestParam int deptId) {
+        return ResponseEntity.ok(service.getFillRate(year, deptId));
     }
 
     @GetMapping("/all")

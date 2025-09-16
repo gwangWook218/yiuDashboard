@@ -46,7 +46,7 @@ public class NewAdmissionStatsService {
     }
 
     public double getFillRateByDepartment(String departmentName) {
-        NewAdmissionStats stats = repository.findByDepartmentName(departmentName);
+        NewAdmissionStats stats = repository.findByDepartmentName(departmentName).orElse(null);
         if (stats == null) return 0.0;
         Double saved = stats.getFillRate();
         return (saved != null) ? saved : stats.calculateFillRate();
