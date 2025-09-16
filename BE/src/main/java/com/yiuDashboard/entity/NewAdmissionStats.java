@@ -55,4 +55,6 @@ public class NewAdmissionStats {
     private void beforeSave() {
         fillRate = calculateFillRate();
     }
+
+    public Long getId() { return id; }
 }
