@@ -2,11 +2,11 @@ package com.yiuDashboard.service;
 
 import com.yiuDashboard.entity.NewAdmissionStats;
 import com.yiuDashboard.repository.NewAdmissionStatsRepository;
+import com.yiuDashboard.repository.NewAdmissionStatsRepository.GraduateOutcomeAgg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,55 +22,57 @@ public class NewAdmissionStatsService {
         return repository.findByMajorCategory(majorCategory);
     }
 
-    public double getFillRateByDepartment(String departmentName) {
-        NewAdmissionStats stats = repository.findByDepartmentName(departmentName);
-        if (stats == null) {
-            return 0.0;
-        }
-        return stats.calculateFillRate();
-    }
-
-    public NewAdmissionStats saveStats(NewAdmissionStats stats) {
-        stats.setFillRate(stats.calculateFillRate());
-        return repository.save(stats);
+    public Map<String, Object> getUniversityFillRate(Integer year) {
+        Long quota = repository.findQuotaSum(year);
+        Long enrolled = repository.findEnrolledSum(year);
+        if (quota == null || enrolled == null || quota == 0L) throw new EntityNotFoundException("No fill-rate data");
+        double rate = (enrolled * 100.0) / quota;
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("year", year);
+        m.put("quotaSum", quota);
+        m.put("enrolledSum", enrolled);
+        m.put("fillRate", rate);
+        return m;
     }
 
     public Map<String, Object> getDepartmentAdmissionComparison(String departmentName) {
-        Map<String, Object> result = new HashMap<>();
-
-        // 1. 학과 데이터 조회
         NewAdmissionStats stats = repository.findByDepartmentName(departmentName);
-        if (stats == null) {
-            result.put("studentQuota", 0);
-            result.put("enrolledStudentCount", 0);
-            result.put("fillRate", 0.0);
-            result.put("similarMajorAverageFillRate", 0.0);
-            return result;
-        }
-
-        // 2. 충원율 계산
-        double fillRate = stats.calculateFillRate();
-
-        // 3. 유사 계열 평균 충원율 조회
-        Double similarMajorAverageFillRate = repository.findAverageFillRateByMajorCategory(stats.getMajorCategory());
-        if (similarMajorAverageFillRate == null) {
-            similarMajorAverageFillRate = 0.0;
-        }
-
-        // 4. 결과 데이터
+        if (stats == null) throw new EntityNotFoundException("No department data");
+        Double similar = repository.findAverageFillRateByMajorCategory(stats.getMajorCategory());
+        Map<String, Object> result = new LinkedHashMap<>();
         result.put("studentQuota", stats.getStudentQuota());
         result.put("enrolledStudentCount", stats.getEnrolledStudentCount());
-        result.put("fillRate", fillRate);
-        result.put("similarMajorAverageFillRate", similarMajorAverageFillRate);
-
+        result.put("fillRate", stats.calculateFillRate());
+        result.put("similarMajorAverageFillRate", similar == null ? 0.0 : similar);
         return result;
     }
-    // 학과별 졸업생 진출 진로 요약 정보 조회
+
     public String getGraduateCareerSummary(String departmentName) {
-        String summary = repository.findGraduateCareerSummaryByDepartment(departmentName);
-        if (summary == null) {
-            return "졸업생 진출 진로 요약 정보가 없습니다.";
-        }
+        String summary = Optional.ofNullable(repository.findByDepartmentName(departmentName))
+                .map(NewAdmissionStats::getGraduateCareerSummary).orElse(null);
+        if (summary == null) throw new EntityNotFoundException("No career summary");
         return summary;
+    }
+
+    public Map<String, Object> getGraduationOutcomeSummary(Integer gradYear, Integer deptId) {
+        GraduateOutcomeAgg agg = repository.aggregateGraduateOutcome(gradYear, deptId);
+        if (agg == null || agg.getGraduates() == null || agg.getGraduates() == 0) {
+            throw new EntityNotFoundException("No graduation outcome data");
+        }
+        long g = Optional.ofNullable(agg.getGraduates()).orElse(0L);
+        long e = Optional.ofNullable(agg.getEmployment()).orElse(0L);
+        long f = Optional.ofNullable(agg.getFurtherStudy()).orElse(0L);
+        long o = Optional.ofNullable(agg.getOthers()).orElse(0L);
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("year", gradYear);
+        m.put("departmentId", deptId);
+        m.put("graduates", g);
+        m.put("employmentCount", e);
+        m.put("employmentRate", g == 0 ? 0.0 : e * 100.0 / g);
+        m.put("furtherStudyCount", f);
+        m.put("furtherStudyRate", g == 0 ? 0.0 : f * 100.0 / g);
+        m.put("othersCount", o);
+        m.put("othersRate", g == 0 ? 0.0 : o * 100.0 / g);
+        return m;
     }
 }

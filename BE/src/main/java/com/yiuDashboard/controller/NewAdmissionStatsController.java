@@ -25,15 +25,9 @@ public class NewAdmissionStatsController {
         return ResponseEntity.ok(service.getStatsByMajorCategory(majorCategory));
     }
 
-    @GetMapping("/fill-rate/{departmentName}")
-    public ResponseEntity<Double> getFillRateByDepartment(@PathVariable String departmentName) {
-        double fillRate = service.getFillRateByDepartment(departmentName);
-        return ResponseEntity.ok(fillRate);
-    }
-
-    @PostMapping
-    public ResponseEntity<NewAdmissionStats> saveStats(@RequestBody NewAdmissionStats stats) {
-        return ResponseEntity.ok(service.saveStats(stats));
+    @GetMapping("/fill-rate")
+    public ResponseEntity<Map<String, Object>> getUniversityFillRate(@RequestParam Integer year) {
+        return ResponseEntity.ok(service.getUniversityFillRate(year));
     }
 
     @GetMapping("/comparison/{departmentName}")
@@ -43,7 +37,11 @@ public class NewAdmissionStatsController {
 
     @GetMapping("/career-summary/{departmentName}")
     public ResponseEntity<String> getGraduateCareerSummary(@PathVariable String departmentName) {
-        String summary = service.getGraduateCareerSummary(departmentName);
-        return ResponseEntity.ok(summary);
+        return ResponseEntity.ok(service.getGraduateCareerSummary(departmentName));
+    }
+
+    @GetMapping("/graduation/outcomes/summary")
+    public ResponseEntity<Map<String, Object>> getGraduationOutcomeSummary(@RequestParam Integer gradYear, @RequestParam Integer deptId) {
+        return ResponseEntity.ok(service.getGraduationOutcomeSummary(gradYear, deptId));
     }
 }
