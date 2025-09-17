@@ -3,6 +3,7 @@ package com.yiuDashboard.security.jwt;
 import com.yiuDashboard.entity.Role;
 import com.yiuDashboard.entity.User;
 import com.yiuDashboard.security.CustomUserDetails;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 로그인/회원가입은 필터 통과시켜서 토큰 검사 안함
-        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/register")) {
+        if (path.startsWith("/api/auth/login")
+                || path.startsWith("/api/auth/register")
+                || path.startsWith("/api/public")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,11 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // token 소멸 시간 검증
         // 유효기간이 만료한 경우
-        if(jwtUtil.isExpired(token)){
-            System.out.println("token expired");
+        try {
+            if(jwtUtil.isExpired(token)){
+                System.out.println("token expired");
+                filterChain.doFilter(request, response);
+                return;
+            }
+        } catch (ExpiredJwtException e) {
+            System.out.println("token expired exception");
             filterChain.doFilter(request, response);
-
-            // 메서드 종료
             return;
         }
 
