@@ -1,53 +1,64 @@
 package com.yiuDashboard.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "employment_stats")
+@Table(name = "graduate_employment")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class EmploymentStats {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private EmploymentStatsId id;
 
-    // 학과명
-    @Column(nullable = false, length = 100)
-    private String departmentName;
+    @Column(name = "graduates")
+    private Integer graduates;
 
-    // 졸업생 수
-    @Column(nullable = false)
-    private int graduates;
+    @Column(name = "insured_employees")
+    private Integer insuredEmployees;
 
-    // 취업자 수
-    @Column(nullable = false)
-    private int employed;
+    @Column(name = "overseas_employees")
+    private Integer overseasEmployees;
 
-    // 취업률 (계산해서 저장하거나 DB에서 바로 관리할 수 있음)
-    @Column(nullable = false)
-    private double employmentRate;
+    @Column(name = "agriculture_fishery_workers")
+    private Integer agricultureFisheryWorkers;
 
-    // 졸업생 진출 분야
-    @Column(nullable = false, length = 100)
-    private String careerField;
+    @Column(name = "individual_creators")
+    private Integer individualCreators;
 
-    // 해당 분야로 진출한 비율
-    @Column(nullable = false)
-    private double careerFieldRate;
+    @Column(name = "self_employed")
+    private Integer selfEmployed;
 
-    //취업률 자동 계산용 편의 메서드
-    public void calculateEmploymentRate() {
-        if (graduates > 0) {
-            this.employmentRate = ((double) employed / graduates) * 100.0;
-        } else {
-            this.employmentRate = 0.0;
-        }
-    }
+    @Column(name = "freelancers")
+    private Integer freelancers;
+
+    @Column(name = "further_study")
+    private Integer furtherStudy;
+
+    @Column(name = "military_service")
+    private Integer militaryService;
+
+    @Column(name = "unable_to_work")
+    private Integer unableToWork;
+
+    @Column(name = "foreign_students")
+    private Integer foreignStudents;
+
+    @Column(name = "excluded_cases")
+    private Integer excludedCases;
+
+    @Column(name = "others")
+    private Integer others;
+
+    @Column(name = "unknown")
+    private Integer unknown;
 }
