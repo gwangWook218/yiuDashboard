@@ -3,8 +3,7 @@ package com.yiuDashboard.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -16,6 +15,7 @@ public class EmploymentStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /** 기준 연도 */
     @Column(name = "year", nullable = false)
     private Integer year;
 
@@ -35,18 +35,15 @@ public class EmploymentStats {
     @Column(name = "employment_rate", nullable = false)
     private double employmentRate;
 
-<<<<<<< HEAD
-    // 졸업생 진출 분야
+    /** 졸업생 진출 분야 (다른 브랜치에서 추가된 필드) */
     @Column(nullable = false, length = 100)
     private String careerField;
 
-    // 해당 분야로 진출한 비율
+    /** 해당 분야 진출 비율 (다른 브랜치에서 추가된 필드) */
     @Column(nullable = false)
     private double careerFieldRate;
 
-    //취업률 자동 계산용 편의 메서드
-=======
->>>>>>> 8c10eda (feat: employment-stats-api 수정)
+    /** 취업률 자동 계산 메서드 (다른 브랜치에서 추가된 메서드) */
     public void calculateEmploymentRate() {
         if (graduates > 0) {
             this.employmentRate = (employed * 100.0) / graduates;
