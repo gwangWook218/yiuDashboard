@@ -16,6 +16,7 @@ public interface RecruitmentRateRepository extends JpaRepository<AdmissionSummar
             select new com.yiuDashboard.dto.RecruitmentRateDto(
                 a.year,
                 case
+                    when a.admissionType like '%특별%' then '특별전형'
                 	when a.admissionType like '%수시%' then '수시'
                 	when a.admissionType like '%정시%' then '정시'
                 	else '기타'
@@ -27,6 +28,7 @@ public interface RecruitmentRateRepository extends JpaRepository<AdmissionSummar
             where a.year=:year
             group by a.year,
             case
+                when a.admissionType like '%특별%' then '특별전형'
                 when a.admissionType like '%수시%' then '수시'
                 when a.admissionType like '%정시%' then '정시'
                 else '기타'

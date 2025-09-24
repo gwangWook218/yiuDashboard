@@ -1,12 +1,11 @@
 package com.yiuDashboard.service;
 
-import com.yiuDashboard.dto.gradEmployment.*;
+import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
 import com.yiuDashboard.repository.EmploymentRateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,57 +13,22 @@ public class EmploymentRateService {
 
     private final EmploymentRateRepository repository;
 
-    public EmploymentRateResponseDTO getEmploymentRateByYear(int year) {
-        List<Object[]> results = repository.findEmployRateByYear(year);
-        List<DepartmentEmploymentDTO> departments = results.stream().map(row -> new DepartmentEmploymentDTO(
-                (String) row[0],
-                (String) row[1],
-                (String) row[2],
-                (String) row[3],
-                row[4] != null ? ((Number) row[4]).doubleValue() : null
-        )).toList();
+    public GraduateStatsDTO getGraduateStats(int year, String department) {
+        GraduateStatsDTO dto = repository.findGraduateStats(year, department)
+                .orElse(null);
 
-//        전체 평균 계산
-        Double overallAverage = departments.stream()
-                .filter(d -> d.getEmploymentRate() != null)
-                .mapToDouble(DepartmentEmploymentDTO::getEmploymentRate)
-                .average().orElse(0.0);
+        if (dto == null) return null;
 
-        return new EmploymentRateResponseDTO(year, overallAverage, departments);
-    }
+        int total = dto.getTotal();
+        int employed = dto.getEmployed();
+        int admission = dto.getAdmission();
+        int etc = dto.getEtc();
+        int excluded = total - (employed + admission + etc); // 계산 필요
 
-    public EmploymentTrendDTO getTrendByYear(int departmentId) {
-        List<Object[]> results = repository.findTrendByYear(departmentId);
+        dto.setEmployedRate(Math.round((double) employed / (total - excluded) * 1000) / 10.0);
+        dto.setAdmissionRate(Math.round((double) admission / (total - excluded) * 1000) / 10.0);
+        dto.setEtcRate(Math.round((double) etc / (total - excluded) * 1000) / 10.0);
 
-        if (results.isEmpty()) {
-            return null;
-        }
-
-        Object[] firstRow = results.get(0);
-        String college = (String) firstRow[1];
-        String department = (String) firstRow[2];
-        String isDayTime = (String) firstRow[3];
-        String isContract = (String) firstRow[4];
-
-        List<YearEmploymentRateDTO> trend = results.stream().map(row -> new YearEmploymentRateDTO(
-                ((Number) row[0]).intValue(),
-                row[5] != null ? ((Number) row[5]).doubleValue() : null
-        )).toList();
-
-        return new EmploymentTrendDTO(college, department, isDayTime, isContract, trend);
-    }
-
-    public EmploymentRankingDTO getRankByYear(int year, int topN) {
-        List<EmploymentRankingDTO.DepartmentRateDTO> allRates = repository.findRankingByYear(year);
-
-        List<EmploymentRankingDTO.DepartmentRateDTO> topDepartments =
-                allRates.stream().limit(topN).toList();
-
-        List<EmploymentRankingDTO.DepartmentRateDTO> bottomDepartments = allRates.stream()
-                .skip(Math.max(allRates.size() - topN, 0))
-                .sorted(Comparator.comparingDouble(EmploymentRankingDTO.DepartmentRateDTO::getEmploymentRate))
-                .toList();
-
-        return new EmploymentRankingDTO(year, topDepartments, bottomDepartments);
+        return dto;
     }
 }

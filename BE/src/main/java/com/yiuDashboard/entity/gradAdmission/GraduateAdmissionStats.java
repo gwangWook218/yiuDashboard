@@ -1,6 +1,7 @@
 package com.yiuDashboard.entity.gradAdmission;
 
 import com.yiuDashboard.entity.Department;
+import com.yiuDashboard.entity.Graduates;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,8 +14,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "graduate_admission_stats")
 public class GraduateAdmissionStats {
 
-    @EmbeddedId
-    private GraduateAdmissionStatsId id;
+    @Id
+    private Integer gradId;
+
+    @OneToOne
+    @MapsId // PK와 FK를 동일하게 매핑
+    @JoinColumn(name = "grad_id")
+    private Graduates graduate;
 
     private int graduatesMale;
     private int graduatesFemale;
@@ -33,7 +39,5 @@ public class GraduateAdmissionStats {
     private int overseasGradMale;
     private int overseasGradFemale;
 
-    @ManyToOne
-    @JoinColumn(name = "dept_id", referencedColumnName = "dept_id")
-    private Department department;
+
 }

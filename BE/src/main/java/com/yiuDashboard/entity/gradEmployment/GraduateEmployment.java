@@ -1,36 +1,46 @@
 package com.yiuDashboard.entity.gradEmployment;
 
-import com.yiuDashboard.entity.Department;
+import com.yiuDashboard.entity.Graduates;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "graduate_employment")
 public class GraduateEmployment {
 
-    @EmbeddedId
-    private GraduateEmploymentId id;
+    @Id
+    private Integer gradId;
 
-    private Integer graduates;
-    private Integer insuredEmployees;
-    private Integer overseasEmployees;
-    private Integer agricultureFisheryWorkers;
-    private Integer individualCreators;
-    private Integer selfEmployed;
-    private Integer freelancers;
-    private Integer furtherStudy;
+    @OneToOne
+    @MapsId // PK와 FK를 동일하게 매핑
+    @JoinColumn(name = "grad_id")
+    private Graduates graduate;
+
+    private Integer insuredEmployeesMale;
+    private Integer insuredEmployeesFemale;
+    private Integer overseasEmployeesMale;
+    private Integer overseasEmployeesFemale;
+    private Integer agricultureFisheryWorkersMale;
+    private Integer agricultureFisheryWorkersFemale;
+    private Integer individualCreatorsMale;
+    private Integer individualCreatorsFemale;
+    private Integer selfEmployedMale;
+    private Integer selfEmployedFemale;
+    private Integer freelancersMale;
+    private Integer freelancersFemale;
+    private Integer furtherStudyMale;
+    private Integer furtherStudyFemale;
     private Integer militaryService;
-    private Integer unableToWork;
-    private Integer foreignStudents;
-    private Integer excludedCases;
-
-    @ManyToOne
-    @MapsId("departmentId")
-    @JoinColumn(name = "department_id", referencedColumnName = "dept_id")
-    private Department department;
+    private Integer unableToWorkMale;
+    private Integer unableToWorkFemale;
+    private Integer foreignStudentsMale;
+    private Integer foreignStudentsFemale;
+    private Integer excludedCasesMale;
+    private Integer excludedCasesFemale;
+    private Integer othersMale;
+    private Integer othersFemale;
+    private Integer unknownMale;
+    private Integer unknownFemale;
 }

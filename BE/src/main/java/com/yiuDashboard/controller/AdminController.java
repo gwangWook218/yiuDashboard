@@ -1,12 +1,8 @@
 package com.yiuDashboard.controller;
 
-import com.yiuDashboard.dto.AdmissionRateDTO;
 import com.yiuDashboard.dto.DropoutRateDTO;
-import com.yiuDashboard.dto.gradEmployment.DepartmentEmploymentDTO;
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
-import com.yiuDashboard.dto.gradEmployment.EmploymentRankingDTO;
-import com.yiuDashboard.dto.gradEmployment.EmploymentRateResponseDTO;
-import com.yiuDashboard.dto.gradEmployment.EmploymentTrendDTO;
+import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
 import com.yiuDashboard.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +17,6 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
-    private final GraduateAdmissionService admissionService;
     private final EnrollmentService enrollmentService;
     private final EmploymentRateService employmentRateService;
     private final DropoutRateService dropoutRateService;
@@ -84,35 +79,29 @@ public class AdminController {
         return adminService.getComparisonEntranceModelLastRegistrationRatio(year, schlId).block();
     }
 
-//    진학률
-    @GetMapping("/graduater/admission")
-    public List<AdmissionRateDTO> getAdmission(@Param("year") int year, Authentication authentication) {
-        return admissionService.getAdmissionRate(year);
-    }
-
 //    취업률
-    @GetMapping("graduater/employ")
+    @GetMapping("/graduater/employ")
     public String getNoticeGraduateEmploymentRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getNoticeGraduateEmploymentRate(year, schlId).block();
     }
 
 //    중도탈락 학생비율
-    @GetMapping("dropout/compare")
+    @GetMapping("/dropout/compare")
     public String getComparisonDropOutStudentCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getComparisonDropOutStudentCrntSt(year, schlId).block();
     }
 
-    @GetMapping("dropout/region")
+    @GetMapping("/dropout/region")
     public String getRegionalDropOutStudentCrntSt(Authentication authentication) {
         return adminService.getRegionalDropOutStudentCrntSt().block();
     }
 
-    @GetMapping("dropout/notice")
+    @GetMapping("/dropout/notice")
     public String getNoticeStudentsWastageRate(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getNoticeStudentsWastageRate(year, schlId).block();
     }
 
-    @GetMapping("dropout/dept")
+    @GetMapping("/dropout/dept")
     public List<DropoutRateDTO> findByDeptName(@Param("year") int year, Authentication authentication) {
         return dropoutRateService.findByDeptName(year);
     }
@@ -124,51 +113,41 @@ public class AdminController {
     }
 
 //    1인당 장학금 지급액
-    @GetMapping("scholarship/per/compare")
+    @GetMapping("/scholarship/per/compare")
     public String getComparisonScholarshipBenefitCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getComparisonScholarshipBenefitCrntSt(year, schlId).block();
     }
 
-    @GetMapping("scholarship/per/region")
+    @GetMapping("/scholarship/per/region")
     public String getRegionalScholarshipBenefitCrntSt(Authentication authentication) {
         return adminService.getRegionalScholarshipBenefitCrntSt().block();
     }
 
 //    학생 1인당 교육비(대학비교통계)
-    @GetMapping("education/cost/compare")
+    @GetMapping("/education/cost/compare")
     public String getComparisonEducationalExpensesReductionCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getComparisonEducationalExpensesReductionCrntSt(year, schlId).block();
     }
 
-    @GetMapping("education/cost/region")
+    @GetMapping("/education/cost/region")
     public String getRegionalEducationalExpensesReductionCrntSt(Authentication authentication) {
         return adminService.getRegionalEducationalExpensesReductionCrntSt().block();
     }
 
 //    기숙사 수용률
-    @GetMapping("dormitory/compare")
+    @GetMapping("/dormitory/compare")
     public String getComparisonDormitoryAcceptanceCrntSt(@Param("year") int year, @Param("schlId") String schlId, Authentication authentication) {
         return adminService.getComparisonDormitoryAcceptanceCrntSt(year, schlId).block();
     }
 
-    @GetMapping("dormitory/region")
+    @GetMapping("/dormitory/region")
     public String getRegionalDormitoryAcceptanceCrntSt(Authentication authentication) {
         return adminService.getRegionalDormitoryAcceptanceCrntSt().block();
     }
 
 //    졸업생 취업률
     @GetMapping("/employment-rates")
-    public EmploymentRateResponseDTO findEmployRateByYear(@RequestParam int year) {
-        return employmentRateService.getEmploymentRateByYear(year);
-    }
-
-    @GetMapping("/employment-rates/trend")
-    public EmploymentTrendDTO findTrendByYear(@RequestParam int departmentId) {
-        return employmentRateService.getTrendByYear(departmentId);
-    }
-
-    @GetMapping("/employment-rates/ranking")
-    public EmploymentRankingDTO getRanking(@RequestParam int year, @RequestParam(defaultValue = "5") int top) {
-        return employmentRateService.getRankByYear(year, top);
+    public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam String department) {
+        return employmentRateService.getGraduateStats(year, department);
     }
 }
