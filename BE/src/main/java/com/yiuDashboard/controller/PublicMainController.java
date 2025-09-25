@@ -2,14 +2,18 @@ package com.yiuDashboard.controller;
 
 import com.yiuDashboard.dto.RecruitmentRateDto;
 import com.yiuDashboard.service.PublicMainService;
+import com.yiuDashboard.service.StaffStatisticsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ import java.util.List;
 public class PublicMainController {
 
     private final PublicMainService publicMainService;
+    private final StaffStatisticsService staffStatisticsService;
 
 //    재학생 수
     @GetMapping("/students")
@@ -40,6 +45,17 @@ public class PublicMainController {
     @GetMapping("/faculty")
     public Mono<String> getComparisonFullTimeFacultyEnsureCrntSt(@RequestParam int year, @RequestParam int indctId) {
         return publicMainService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId);
+    }
+
+//    직원 수
+    @GetMapping("/staff")
+    public ResponseEntity<Map<String, Long>> getTotalStaffCount() {
+        Long staffCount = staffStatisticsService.getTotalStaffCount();
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("staff_count", staffCount);
+
+        return ResponseEntity.ok(response);
     }
 
 //    1인당 장학금
