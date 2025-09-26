@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -39,38 +41,18 @@ public class AuthController {
         return null;
     }
 
-    @PostMapping("/register/sutdent")
-    public ResponseEntity<?> registerStudent(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
 
         var errorResponse = validateRegisterRequest(request, bindingResult);
         if (errorResponse != null) return errorResponse;
 
-        // 에러가 존재하지 않을 시 joinRequest 통해서 회원가입 완료
-        request.setRole(Role.STUDENT);
-        authService.register(request);
-        return ResponseEntity.ok("회원가입이 완료되었습니다");
-    }
-
-    @PostMapping("/register/professor")
-    public ResponseEntity<?> registerProfessor(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
-
-        var errorResponse = validateRegisterRequest(request, bindingResult);
-        if (errorResponse != null) return errorResponse;
-
-        // 에러가 존재하지 않을 시 joinRequest 통해서 회원가입 완료
-        request.setRole(Role.PROFESSOR);
-        authService.register(request);
-        return ResponseEntity.ok("회원가입이 완료되었습니다");
-    }
-
-    @PostMapping("/register/admin")
-    public ResponseEntity<?> registerAdmin(@Valid @RequestBody RegisterRequest request, BindingResult bindingResult) {
-
-        var errorResponse = validateRegisterRequest(request, bindingResult);
-        if (errorResponse != null) return errorResponse;
-
-        // 에러가 존재하지 않을 시 joinRequest 통해서 회원가입 완료
-        request.setRole(Role.ADMIN);
+        if (request.getRole() == null ||
+                (!request.getRole().equals(Role.STUDENT) &&
+                        !request.getRole().equals(Role.PROFESSOR) &&
+                        !request.getRole().equals(Role.ADMIN))) {
+            return ResponseEntity.badRequest().body("올바른 회원 유형을 선택하세요.");
+        }
         authService.register(request);
         return ResponseEntity.ok("회원가입이 완료되었습니다");
     }
@@ -88,7 +70,8 @@ public class AuthController {
     }
 
     @PostMapping("/find-id")
-    public ResponseEntity<?> findByEmail(@RequestParam String email) {
+    public ResponseEntity<?> findByEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
         String loginId = authService.findLoginIdByEmail(email);
 
         if (loginId == null) {

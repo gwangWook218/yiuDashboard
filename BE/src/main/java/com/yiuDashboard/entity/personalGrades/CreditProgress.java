@@ -1,4 +1,4 @@
-package com.yiuDashboard.dto;
+package com.yiuDashboard.entity.personalGrades;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

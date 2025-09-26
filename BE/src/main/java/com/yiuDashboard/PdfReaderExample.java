@@ -1,6 +1,6 @@
 package com.yiuDashboard;
 
-import com.yiuDashboard.dto.CreditProgress;
+import com.yiuDashboard.entity.personalGrades.CreditProgress;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 

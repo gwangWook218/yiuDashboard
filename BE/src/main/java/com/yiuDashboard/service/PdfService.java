@@ -1,12 +1,11 @@
 package com.yiuDashboard.service;
 
-import com.yiuDashboard.dto.CreditProgress;
-import com.yiuDashboard.dto.SemesterRecord;
+import com.yiuDashboard.entity.personalGrades.SemesterRecord;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +15,8 @@ import java.util.regex.Pattern;
 @Service
 public class PdfService {
 
-    public List<SemesterRecord> extractSemesterRecords(String filePath) throws IOException {
-        File file = new File(filePath);
-        PDDocument document = PDDocument.load(file);
+    public List<SemesterRecord> extractSemesterRecords(MultipartFile file, Long userId) throws IOException {
+        PDDocument document = PDDocument.load(file.getInputStream());
 
         PDFTextStripper stripper = new PDFTextStripper();
         String pdfText = stripper.getText(document);
@@ -37,7 +35,7 @@ public class PdfService {
             int credits = Integer.parseInt(matcher.group(3));
             double gpa = Double.parseDouble(matcher.group(4));
 
-            records.add(new SemesterRecord(year + "-" + semester, credits, gpa));
+            records.add(new SemesterRecord(year + "-" + semester, credits, gpa, userId));
         }
 
         return records;
