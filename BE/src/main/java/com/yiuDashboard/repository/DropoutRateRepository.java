@@ -13,23 +13,37 @@ import java.util.List;
 @Repository
 public interface DropoutRateRepository extends JpaRepository<DropoutByCollege, DropoutByCollegeId> {
 
+//    학과별 중도탈락현황 (AI융합대학)
     @Query("""
             SELECT new com.yiuDashboard.dto.DropoutRateDTO(
-                dbc.id.year,
-                dd.dropoutCollege,
-                dd.dropoutDept,
-                dbc.percentage,
-                dbc.percentage - (SELECT AVG(dbc2.percentage)
-                                  FROM DropoutByCollege dbc2
-                                  WHERE dbc2.id.year = dbc.id.year)
+                 dd.dropoutDept,
+                 round(dbc.atRiskStudents * 100.0 / (select sum(dbc2.atRiskStudents)
+                    from DropoutByCollege dbc2 where dbc2.id.year = :year), 1),
+                 round(dbc.nonRiskStudents * 100.0 / (select sum(dbc3.nonRiskStudents)
+                    from DropoutByCollege dbc3 where dbc3.id.year = :year), 1),
+                 round((dbc.atRiskStudents + dbc.nonRiskStudents) * 100.0 / (select sum(dbc4.atRiskStudents + dbc4.nonRiskStudents)
+                    from DropoutByCollege dbc4 where dbc4.id.year = :year), 1)
             )
             FROM DropoutByCollege dbc
             JOIN dbc.dropoutDepartment dd
-            WHERE dbc.id.studentType = '잠재위험학생'
-              AND dbc.id.year = :year
-            ORDER BY dbc.percentage - (SELECT AVG(dbc2.percentage)
-                                  FROM DropoutByCollege dbc2
-                                  WHERE dbc2.id.year = dbc.id.year) DESC
+            WHERE dbc.id.year = :year
             """)
-    List<DropoutRateDTO> findByDeptName(@Param("year") int year);
+    List<DropoutRateDTO> findDropoutStatsByYear(@Param("year") int year);
+
+//    학과별 중도탈락현황 (학과별 상세)
+    @Query("""
+            SELECT new com.yiuDashboard.dto.DropoutRateDTO(
+                dd.dropoutDept,
+                round(dbc.atRiskStudents * 100.0 / (select sum(dbc2.atRiskStudents)
+                    from DropoutByCollege dbc2 where dbc2.id.year = :year), 1),
+                round(dbc.nonRiskStudents * 100.0 / (select sum(dbc3.nonRiskStudents)
+                    from DropoutByCollege dbc3 where dbc3.id.year = :year), 1),
+                round((dbc.atRiskStudents + dbc.nonRiskStudents) * 100.0 / (select sum(dbc4.atRiskStudents + dbc4.nonRiskStudents)
+                    from DropoutByCollege dbc4 where dbc4.id.year = :year), 1)
+            )
+            from DropoutByCollege dbc
+            join dbc.dropoutDepartment dd
+            where dbc.id.year = :year and dd.dropoutDept = :dept
+            """)
+    DropoutRateDTO getDropoutDetail(@Param("year") int year, @Param("dept") String dept);
 }

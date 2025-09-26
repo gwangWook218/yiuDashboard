@@ -15,7 +15,8 @@ public class DropoutByCollege {
     @EmbeddedId
     private DropoutByCollegeId id;
 
-    private Double percentage;
+    private Integer atRiskStudents;
+    private Integer nonRiskStudents;
 
     @ManyToOne
     @MapsId("dropoutDeptId")

@@ -8,9 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DropoutRateDTO {
-    private Integer year;
-    private String college;
-    private String department;
-    private Double riskPercentage;
-    private Double deviationFromAvg;
+    private String departments;
+    private Double riskRate;
+    private Double normalRate;
+    private Double totalRate;
 }

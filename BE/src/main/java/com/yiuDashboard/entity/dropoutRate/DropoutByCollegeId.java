@@ -6,5 +6,4 @@ import jakarta.persistence.Embeddable;
 public class DropoutByCollegeId {
     private Integer dropoutDeptId;
     private Integer year;
-    private String studentType;
 }
