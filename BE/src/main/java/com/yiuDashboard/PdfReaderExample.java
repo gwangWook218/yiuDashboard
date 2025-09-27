@@ -19,23 +19,25 @@ public class PdfReaderExample {
 
         PDFTextStripper stripper = new PDFTextStripper();
         String pdfText = stripper.getText(document);
+        pdfText = pdfText.replace("\u00A0", " "); // non-breaking space
+        pdfText = pdfText.replaceAll("\\r?\\n", " "); // 줄바꿈을 공백으로
         System.out.println(pdfText);
         document.close();
 
-        String regex = "교양필수\\s*(\\d+)\\s*(\\d+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(pdfText);
-
-        List<CreditProgress> records = new ArrayList<>();
-
-        while (matcher.find()) {
-            String category = matcher.group(1);
-            int completed = Integer.parseInt(matcher.group(2));
-            int total = Integer.parseInt(matcher.group(3));
-
-            records.add(new CreditProgress(category, completed, total));
-        }
-
-        records.forEach(System.out::println);
+//        String regex = "교양필수\\s*(\\d+)\\s*(\\d+)";
+//        Pattern pattern = Pattern.compile(regex);
+//        Matcher matcher = pattern.matcher(pdfText);
+//
+//        List<CreditProgress> records = new ArrayList<>();
+//
+//        while (matcher.find()) {
+//            String category = matcher.group(1);
+//            int completed = Integer.parseInt(matcher.group(2));
+//            int total = Integer.parseInt(matcher.group(3));
+//
+//            records.add(new CreditProgress(category, completed, total));
+//        }
+//
+//        records.forEach(System.out::println);
     }
 }

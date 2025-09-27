@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PersonalGradesRepository extends JpaRepository<SemesterRecord, Long> {
+public interface SemesterRecordRepository extends JpaRepository<SemesterRecord, Long> {
     List<SemesterRecord> findByUserId(Long userId);
 }
