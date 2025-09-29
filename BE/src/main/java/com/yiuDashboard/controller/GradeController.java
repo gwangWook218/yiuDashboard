@@ -22,7 +22,7 @@ public class GradeController {
     private final SemesterRecordRepository recordRepository;
     private final CreditProgressRepository progressRepository;
 
-    @PostMapping("/upload")
+    @PostMapping("/semester/upload")
     public ResponseEntity<List<SemesterRecord>> uploadSemesterRecord(
             @RequestParam("file") MultipartFile file,
             @RequestParam("userId") Long userId) throws IOException {
@@ -31,12 +31,12 @@ public class GradeController {
         return ResponseEntity.ok(records);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/semester/{userId}")
     public ResponseEntity<List<SemesterRecord>> getSemesterRecords(@PathVariable Long userId) {
         return ResponseEntity.ok(recordRepository.findByUserId(userId));
     }
 
-    @PostMapping("/credit-progress")
+    @PostMapping("/credit-progress/upload")
     public ResponseEntity<List<CreditProgress>> uploadCreditProgress(
             @RequestParam("file") MultipartFile file,
             @RequestParam("userId") Long userId) throws IOException {
