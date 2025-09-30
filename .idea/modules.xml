@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.yiuDashboard.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.yiuDashboard.main.iml" />
+<<<<<<< HEAD
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/yiuDashboard.iml" filepath="$PROJECT_DIR$/.idea/yiuDashboard.iml" />
+>>>>>>> 0f5f54f (feat: faculty-rate-api 오류 해결)
     </modules>
   </component>
 </project>
