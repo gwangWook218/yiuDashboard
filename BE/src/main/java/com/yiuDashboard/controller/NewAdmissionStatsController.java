@@ -25,9 +25,15 @@ public class NewAdmissionStatsController {
         return ResponseEntity.ok(service.getStatsByMajorCategory(majorCategory));
     }
 
-    @GetMapping("/fill-rate")
-    public ResponseEntity<Map<String, Object>> getUniversityFillRate(@RequestParam Integer year) {
-        return ResponseEntity.ok(service.getUniversityFillRate(year));
+    @GetMapping("/fill-rate/{departmentName}")
+    public ResponseEntity<Double> getFillRateByDepartment(@PathVariable String departmentName) {
+        double fillRate = service.getFillRateByDepartment(departmentName);
+        return ResponseEntity.ok(fillRate);
+    }
+
+    @PostMapping
+    public ResponseEntity<NewAdmissionStats> saveStats(@RequestBody NewAdmissionStats stats) {
+        return ResponseEntity.ok(service.saveStats(stats));
     }
 
     @GetMapping("/comparison/{departmentName}")
@@ -37,11 +43,13 @@ public class NewAdmissionStatsController {
 
     @GetMapping("/career-summary/{departmentName}")
     public ResponseEntity<String> getGraduateCareerSummary(@PathVariable String departmentName) {
-        return ResponseEntity.ok(service.getGraduateCareerSummary(departmentName));
+        String summary = service.getGraduateCareerSummary(departmentName);
+        return ResponseEntity.ok(summary);
     }
-
-    @GetMapping("/graduation/outcomes/summary")
-    public ResponseEntity<Map<String, Object>> getGraduationOutcomeSummary(@RequestParam Integer gradYear, @RequestParam Integer deptId) {
-        return ResponseEntity.ok(service.getGraduationOutcomeSummary(gradYear, deptId));
+    // 전공 정보 카드 조회 API
+    @GetMapping("/major-info/{departmentName}")
+    public ResponseEntity<String> getMajorInfoSummary(@PathVariable String departmentName) {
+        String summary = service.getMajorInfoSummary(departmentName);
+        return ResponseEntity.ok(summary);
     }
 }
