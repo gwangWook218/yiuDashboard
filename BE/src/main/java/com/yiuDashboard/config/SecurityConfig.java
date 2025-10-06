@@ -1,13 +1,10 @@
 package com.yiuDashboard.config;
-
 import com.yiuDashboard.security.jwt.JwtAuthenticationFilter;
 import com.yiuDashboard.security.jwt.JwtUtil;
 import com.yiuDashboard.security.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -19,54 +16,46 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 @Configuration
+@EnableMethodSecurity(jsr250Enabled = true)
 @EnableWebSecurity
 @RequiredArgsConstructor
-<<<<<<< HEAD
-@Profile("!local")
-=======
-@Profile("local")
->>>>>>> ab80bb8 (feat: target-setting-api 충돌 해결)
 public class SecurityConfig {
 
-    private final AuthenticationConfiguration authenticationConfiguration;
+    private final AuthenticationConfiguration configuration;
     private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable())
+                .csrf((auth) -> auth.disable())
+                .formLogin((auth) -> auth.disable())
+                .httpBasic((auth -> auth.disable()))
                 .cors(Customizer.withDefaults())
-
                 .authorizeHttpRequests(auth -> auth
-                        // 공개 엔드포인트
+                        /*.requestMatchers(HttpMethod.POST, "/api/learning-roadmap/target-grade").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/learning-roadmap/goal-simulation").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/learning-roadmap/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/learning-roadmap/**").permitAll()
+                        .requestMatchers("/api/learning-roadmap/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register/**").permitAll()
-
-                        // 권한 요구 엔드포인트
+                        .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/professor/**").hasRole("PROFESSOR")
-                        .requestMatchers("/api/student/**").hasRole("STUDENT")
-
-                        // 그 외 요청은 인증 필요
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/student/**").hasRole("STUDENT")*/
+                        .anyRequest().permitAll()
                 )
-
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // JWT 필터 체인 연결 (프로젝트 기존 로직 유지)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class);
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), LoginFilter.class)
+                .addFilterAt(new LoginFilter(authenticationManager(configuration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // CORS (필요 시 운영 도메인으로 좁히세요)
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -87,16 +76,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // API 스모크용: CSRF 비활성화
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // API 전체 허용(스모크용)
-                        .anyRequest().permitAll()
-                );
-        return http.build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

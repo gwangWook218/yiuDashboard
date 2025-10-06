@@ -1,8 +1,8 @@
 package com.yiuDashboard.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "student_learning_loadmap")
@@ -12,10 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class StudentLearningRoadmap {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "earned_credits", nullable = false)
+    private Integer earnedCredits;
 
     // 학생 식별자 (학번 등)
     @Column(nullable = false)
@@ -48,6 +50,10 @@ public class StudentLearningRoadmap {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.currentGpa == null) this.currentGpa = 0.0;
+        if (this.remainingSemesters == null) this.remainingSemesters = 0;
+        if (this.achievable == null) this.achievable = false;
+        if (this.earnedCredits == null) this.earnedCredits = 0;
     }
 
     @PreUpdate
