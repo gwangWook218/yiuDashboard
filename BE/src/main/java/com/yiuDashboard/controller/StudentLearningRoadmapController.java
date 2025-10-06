@@ -1,5 +1,4 @@
 package com.yiuDashboard.controller;
-
 import com.yiuDashboard.entity.StudentLearningRoadmap;
 import com.yiuDashboard.service.StudentLearningRoadmapService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import java.util.List;
 @RequestMapping("/api/student/learning")
 @RequiredArgsConstructor
 public class StudentLearningRoadmapController {
-
     private final StudentLearningRoadmapService service;
 
     /** 목표 성적 설정 */
