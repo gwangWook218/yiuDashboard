@@ -4,7 +4,6 @@ import com.yiuDashboard.security.jwt.JwtAuthenticationFilter;
 import com.yiuDashboard.security.jwt.JwtUtil;
 import com.yiuDashboard.security.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -23,42 +22,39 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-<<<<<<< HEAD
-@Profile("!local")
-=======
-@Profile("local")
->>>>>>> ab80bb8 (feat: target-setting-api 충돌 해결)
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
 
+    /* =========================
+       1) 운영/기본 프로파일용 보안설정
+       ========================= */
     @Bean
+    @Profile("!local")              // local 아닐 때
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .cors(Customizer.withDefaults())
-
                 .authorizeHttpRequests(auth -> auth
                         // 공개 엔드포인트
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register/**").permitAll()
 
-                        // 권한 요구 엔드포인트
+                        // 권한 필요한 엔드포인트
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/professor/**").hasRole("PROFESSOR")
                         .requestMatchers("/api/student/**").hasRole("STUDENT")
 
-                        // 그 외 요청은 인증 필요
+                        // 나머지는 인증
                         .anyRequest().authenticated()
                 )
-
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // JWT 필터 체인 연결 (프로젝트 기존 로직 유지)
+                // 필터 체인
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
@@ -66,12 +62,29 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // CORS (필요 시 운영 도메인으로 좁히세요)
+    /* =========================
+       2) 스모크 테스트(local)용 보안완화
+       ========================= */
+    @Bean
+    @Profile("local")               // local 일 때
+    public SecurityFilterChain smokeFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/**").permitAll()  // 전부 허용
+                        .anyRequest().permitAll()
+                );
+
+        return http.build();
+    }
+
+    /* =========================
+       공통 Bean
+       ========================= */
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
+            @Override public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:3000")
                         .allowedMethods("*")
@@ -89,14 +102,5 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // API 스모크용: CSRF 비활성화
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // API 전체 허용(스모크용)
-                        .anyRequest().permitAll()
-                );
-        return http.build();
     }
 }
