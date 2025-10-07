@@ -5,6 +5,7 @@ import com.yiuDashboard.repository.EmploymentStatsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -12,25 +13,31 @@ import java.util.List;
 public class EmploymentStatsService {
 
     private final EmploymentStatsRepository employmentStatsRepository;
+    private Integer resolveYear() {
+        Integer y = employmentStatsRepository.findLatestYear();
+        return (y != null) ? y : LocalDate.now().getYear();
+    }
 
-    //특정 학과의 취업 통계 조회
+    /** 학과별 취업 통계 (최신년도) */
     public List<EmploymentStats> getStatsByDepartment(String departmentName) {
-        return employmentStatsRepository.findByDepartmentName(departmentName);
+        Integer year = resolveYear();
+        return employmentStatsRepository.findByDepartmentNameAndYear(departmentName, year);
     }
 
-    //취업률 내림차순 정렬로 모든 학과 통계 조회
+    /** 모든 학과 취업 통계 – 취업률 (최신년도) */
     public List<EmploymentStats> getAllStatsSortedByEmploymentRate() {
-        return employmentStatsRepository.findAllByOrderByEmploymentRateDesc();
+        Integer year = resolveYear();
+        return employmentStatsRepository.findByYearOrderByEmploymentRateDesc(year);
     }
 
-    //기준 취업률 이상인 학과 조회
+    /** 기준 취업률 이상 학과 조회 (최신년도) */
     public List<EmploymentStats> getStatsAboveRate(double rate) {
-        return employmentStatsRepository.findByEmploymentRateGreaterThanEqual(rate);
+        Integer year = resolveYear();
+        return employmentStatsRepository.findByYearAndEmploymentRateGreaterThanEqual(year, rate);
     }
 
-    //학과별 취업 통계 신규 저장 (관리자용)
     public EmploymentStats saveEmploymentStats(EmploymentStats stats) {
-        stats.calculateEmploymentRate(); // 취업률 자동 계산
+        stats.calculateEmploymentRate();
         return employmentStatsRepository.save(stats);
     }
 

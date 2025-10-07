@@ -4,7 +4,6 @@ import com.yiuDashboard.security.jwt.JwtAuthenticationFilter;
 import com.yiuDashboard.security.jwt.JwtUtil;
 import com.yiuDashboard.security.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,57 +15,76 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-<<<<<<< HEAD
-@Profile("!local")
-=======
-@Profile("local")
->>>>>>> ab80bb8 (feat: target-setting-api 충돌 해결)
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
 
+    // 공통(운영) 보안 설정: employment-stats는 CSRF만 예외로 두고, 권한 정책 유지
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/employment-stats/**"))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .cors(Customizer.withDefaults())
-
                 .authorizeHttpRequests(auth -> auth
-                        // 공개 엔드포인트
-                        .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/register/**").permitAll()
-
-                        // 권한 요구 엔드포인트
+                        .requestMatchers("/api/public/**", "/api/auth/login", "/api/auth/register/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/professor/**").hasRole("PROFESSOR")
                         .requestMatchers("/api/student/**").hasRole("STUDENT")
-
-                        // 그 외 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // JWT 필터 체인 연결 (프로젝트 기존 로직 유지)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
-                        UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil),
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // CORS (필요 시 운영 도메인으로 좁히세요)
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    // 로컬 개발 편의용(permitAll + csrf.disable): 스모크/개발 테스트 시 사용
+    @Bean
+    @Profile("local")
+    public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/employment-stats/**",
+                                "/api/admission-stats/**",
+                                "/api/public/**",
+                                "/api/auth/login",
+                                "/api/auth/register/**",
+                                "/actuator/**"
+                        ).permitAll()
+                        .anyRequest().permitAll()
+                )
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
+    }
+
+    // (선택) CORS
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -79,24 +97,5 @@ public class SecurityConfig {
                         .allowCredentials(true);
             }
         };
-    }
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // API 스모크용: CSRF 비활성화
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // API 전체 허용(스모크용)
-                        .anyRequest().permitAll()
-                );
-        return http.build();
     }
 }
