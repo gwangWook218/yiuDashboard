@@ -1,39 +1,41 @@
 package com.yiuDashboard.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Entity
-@Table(name = "employment_stats")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "employment_stats")
 public class EmploymentStats {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 학과명
-    @Column(nullable = false, length = 100)
+    @Column(name = "year", nullable = false)
+    private Integer year;
+
+    /** 학과명 */
+    @Column(name = "department_name", nullable = false, length = 100)
     private String departmentName;
 
-    // 졸업생 수
-    @Column(nullable = false)
+    /** 졸업생 수 */
+    @Column(name = "graduates", nullable = false)
     private int graduates;
 
-    // 취업자 수
-    @Column(nullable = false)
+    /** 취업자 수 */
+    @Column(name = "employed", nullable = false)
     private int employed;
 
-    // 취업률 (계산해서 저장하거나 DB에서 바로 관리할 수 있음)
-    @Column(nullable = false)
+    /** 취업률(%) */
+    @Column(name = "employment_rate", nullable = false)
     private double employmentRate;
 
+<<<<<<< HEAD
     // 졸업생 진출 분야
     @Column(nullable = false, length = 100)
     private String careerField;
@@ -43,9 +45,11 @@ public class EmploymentStats {
     private double careerFieldRate;
 
     //취업률 자동 계산용 편의 메서드
+=======
+>>>>>>> 8c10eda (feat: employment-stats-api 수정)
     public void calculateEmploymentRate() {
         if (graduates > 0) {
-            this.employmentRate = ((double) employed / graduates) * 100.0;
+            this.employmentRate = (employed * 100.0) / graduates;
         } else {
             this.employmentRate = 0.0;
         }
