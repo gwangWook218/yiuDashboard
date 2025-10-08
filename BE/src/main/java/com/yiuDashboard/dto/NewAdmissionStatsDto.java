@@ -1,33 +1,21 @@
 package com.yiuDashboard.dto;
 
-import com.yiuDashboard.entity.NewAdmissionStats;
+import lombok.Builder;
 
+@Builder
 public record NewAdmissionStatsDto(
         Long id,
-        int year,
-        int departmentId,
         String majorCategory,
         String departmentName,
-        int studentQuota,
-        int enrolledStudentCount,
-        double fillRate,
+        Integer studentQuota,
+        Integer enrolledStudentCount,
+        double fillRate,                    // 계산값
         Double nationalAverageFillRate,
         Double similarMajorAverageFillRate
 ) {
-    public static NewAdmissionStatsDto from(NewAdmissionStats s) {
-        double fill = (s.getFillRate() != null) ? s.getFillRate() : s.calculateFillRate();
-        return new NewAdmissionStatsDto(
-                s.getId(),
-                s.getYear(),
-                s.getDepartmentId(),
-                s.getMajorCategory(),
-                s.getDepartmentName(),
-                s.getStudentQuota(),
-                s.getEnrolledStudentCount(),
-                fill,
-                s.getNationalAverageFillRate(),
-                s.getSimilarMajorAverageFillRate()
-        );
+    // 필요할 때 사용할 수 있는 헬퍼 (엔티티와 무관)
+    public static double calcFill(Integer enrolled, Integer quota) {
+        if (quota == null || quota == 0 || enrolled == null) return 0d;
+        return Math.round((enrolled * 100.0 / quota) * 10.0) / 10.0;
     }
 }
-
