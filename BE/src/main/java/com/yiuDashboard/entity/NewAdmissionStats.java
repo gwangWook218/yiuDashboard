@@ -1,5 +1,4 @@
 package com.yiuDashboard.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 
