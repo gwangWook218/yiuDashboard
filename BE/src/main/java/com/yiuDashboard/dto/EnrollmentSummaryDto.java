@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EnrollmentSummaryDto {
     private Integer year;
-    private String college;
     private String department;
-    private Long totalStudents;
+    private Number totalStudents;
+    private Number oneYearLater;
+    private Number avgStudents;
+    private Number maxStudents;
+    private Number minStudents;
 }

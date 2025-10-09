@@ -32,8 +32,8 @@ public interface EmploymentRateRepository extends JpaRepository<GraduateEmployme
             FROM GraduateEmployment ge
             JOIN ge.graduate g
             JOIN g.department d
-            WHERE g.year = :year and d.department = :department
+            WHERE g.year = :year and d.deptId = :deptId
             """)
     Optional<GraduateStatsDTO> findGraduateStats(@Param("year") int year,
-                                                 @Param("department") String department);
+                                                 @Param("deptId") int deptId);
 }

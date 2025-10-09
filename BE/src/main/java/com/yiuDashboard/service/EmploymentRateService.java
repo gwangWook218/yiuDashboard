@@ -13,8 +13,8 @@ public class EmploymentRateService {
 
     private final EmploymentRateRepository repository;
 
-    public GraduateStatsDTO getGraduateStats(int year, String department) {
-        GraduateStatsDTO dto = repository.findGraduateStats(year, department)
+    public GraduateStatsDTO getGraduateStats(int year, int deptId) {
+        GraduateStatsDTO dto = repository.findGraduateStats(year, deptId)
                 .orElse(null);
 
         if (dto == null) return null;

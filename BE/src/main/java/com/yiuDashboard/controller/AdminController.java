@@ -1,13 +1,16 @@
 package com.yiuDashboard.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiuDashboard.dto.DropoutRateDTO;
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
 import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
 import com.yiuDashboard.service.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -28,8 +31,8 @@ public class AdminController {
 
 //    지역별통계
     @GetMapping("/ensure/region")
-    public String getRegionalFullTimeFacultyEnsureCrntSt() {
-        return adminService.getRegionalFullTimeFacultyEnsureCrntSt().block();
+    public ResponseEntity<List<Map<String, Object>>> getRegionalFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalFullTimeFacultyEnsureCrntSt());
     }
 
 //    우리대학경쟁력
@@ -113,8 +116,8 @@ public class AdminController {
 
 //    학과별 재학생 수
     @GetMapping("/enrollment/summary")
-    public List<EnrollmentSummaryDto> findByYear(@RequestParam int year) {
-        return enrollmentService.findByYear(year);
+    public List<EnrollmentSummaryDto> findByYear(@RequestParam int year, @RequestParam int deptId) {
+        return enrollmentService.findByYear(year, deptId);
     }
 
 //    1인당 장학금 지급액
@@ -152,7 +155,7 @@ public class AdminController {
 
 //    졸업생 취업률
     @GetMapping("/employment-rates")
-    public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam String department) {
-        return employmentRateService.getGraduateStats(year, department);
+    public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
+        return employmentRateService.getGraduateStats(year, deptId);
     }
 }
