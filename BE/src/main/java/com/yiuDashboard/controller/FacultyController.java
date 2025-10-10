@@ -62,27 +62,14 @@ public class FacultyController {
 
 //    전임교원 1인당 연구비
     @GetMapping("/research/funding-per-faculty/compare")
-    public ResponseEntity<String> getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant(
-            @RequestParam int year,
-            @RequestParam String scope,
-            @RequestParam String schlId) {
-        if ("inside".equalsIgnoreCase(scope)) {
-            return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant(year, schlId).block());
-        } else if ("outside".equalsIgnoreCase(scope)) {
-            return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant(year, schlId).block());
-        } else {
-            return ResponseEntity.badRequest().body("Invalid scope parameter. Use 'inside' or 'outside'.");
-        }
+    public ResponseEntity<?> getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant(
+            @RequestParam String scope) throws JsonProcessingException {
+        return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyForPersonResearchGrant(scope));
     }
 
     @GetMapping("/research/funding-per-faculty/region")
-    public ResponseEntity<List<Map<String, Object>>> getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant(@RequestParam String scope) throws JsonProcessingException {
-        if ("inside".equalsIgnoreCase(scope)) {
-            return ResponseEntity.ok(facultyService.getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant());
-        } else if ("outside".equalsIgnoreCase(scope)) {
-            return ResponseEntity.ok(facultyService.getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant());
-        }
-        return null;
+    public ResponseEntity<?> getFacultyWithGap() throws JsonProcessingException {
+        return ResponseEntity.ok(facultyService.getFacultyWithGap());
     }
 
 //    재학생 수

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -138,25 +139,73 @@ public class FacultyService {
         return results;
     }
 
-//    전임교원 1인당 연구비(교내)
-    public Mono<String> getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant (int year, String schlId) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 999)
-                        .queryParam("schlId", schlId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+//    전임교원 1인당 연구비
+    public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonResearchGrant (String scope) throws JsonProcessingException {
+
+        List<String> schlIds = List.of("0000156", "0000109", "0000051");
+        List<Integer> years = List.of(2022, 2023, 2024);
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (String schlId : schlIds) {
+            for (int year : years) {
+                String path;
+                if ("inside".equalsIgnoreCase(scope)) {
+                    path = "/EducationResearchService/getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant";
+                } else if ("outside".equalsIgnoreCase(scope)) {
+                    path = "/EducationResearchService/getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant";
+                } else {
+                    throw new IllegalArgumentException("Invalid scope: " + scope);
+                }
+
+                String xmlResponse = webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path(path)
+                                .queryParam("ServiceKey", serviceKey)
+                                .queryParam("schlId", schlId)
+                                .queryParam("svyYr", year)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+
+                XmlMapper xmlMapper = new XmlMapper();
+                JsonNode root = xmlMapper.readTree(xmlResponse);
+                JsonNode items = root.path("body").path("items").path("item");
+
+                if (items.isArray()) {
+                    for (JsonNode item : items) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("year", item.path("svyYr").asInt());
+                        map.put("schlKrnNm", item.path("schlKrnNm").asText());
+                        map.put("value", item.path("indctVal1").asDouble());
+                        results.add(map);
+                    }
+                } else if (!items.isMissingNode()) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("year", items.path("svyYr").asInt());
+                    map.put("schlKrnNm", items.path("schlKrnNm").asText());
+                    map.put("value", items.path("indctVal1").asDouble());
+                    results.add(map);
+                }
+            }
+        }
+
+        return results;
     }
 
-    public List<Map<String, Object>> getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant() throws JsonProcessingException {
+    public List<Map<String, Object>> getRegionalFullTimeFacultyForPersonResearchGrant(String scope) throws JsonProcessingException {
+        String path;
+        if ("inside".equalsIgnoreCase(scope)) {
+            path = "/EducationResearchService/getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant";
+        } else if ("outside".equalsIgnoreCase(scope)) {
+            path = "/EducationResearchService/getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant";
+        } else {
+            throw new IllegalArgumentException("Invalid scope: " + scope);
+        }
+
         String xmlResponse = webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant")
+                        .path(path)
                         .queryParam("ServiceKey", serviceKey)
                         .queryParam("schlDivCd", schlDivCd)
                         .build())
@@ -178,16 +227,20 @@ public class FacultyService {
 
             // 전체 / 수도권 / 비수도권만 필터
             if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
+                double val2023 = item.path("indctFirstVal").asDouble();
+                double val2024 = item.path("indctSecondVal").asDouble();
+
                 Map<String, Object> map2023 = new HashMap<>();
                 map2023.put("year", 2023);
-                map2023.put("value", item.path("indctFirstVal").asDouble());
+                map2023.put("value", val2023);
                 map2023.put("region", region);
                 results.add(map2023);
 
                 Map<String, Object> map2024 = new HashMap<>();
                 map2024.put("year", 2024);
-                map2024.put("value", item.path("indctSecondVal").asDouble());
+                map2024.put("value", val2024);
                 map2024.put("region", region);
+                map2024.put("increase", val2024 - val2023);
                 results.add(map2024);
             }
         }
@@ -195,57 +248,57 @@ public class FacultyService {
         return results;
     }
 
-//    전임교원 1인당 연구비(교외)
-public Mono<String> getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant (int year, String schlId) {
-    return webClient.get()
-            .uri(uriBuilder -> uriBuilder
-                    .path("/EducationResearchService/getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant")
-                    .queryParam("ServiceKey", serviceKey)
-                    .queryParam("pageNo", 1)
-                    .queryParam("numOfRows", 999)
-                    .queryParam("schlId", schlId)
-                    .queryParam("svyYr", year)
-                    .build())
-            .retrieve()
-            .bodyToMono(String.class);
-}
+    public List<Map<String, Object>> getFacultyWithGap() throws JsonProcessingException {
+        // 교내/교외 데이터 가져오기
+        List<Map<String, Object>> insideData = getRegionalFullTimeFacultyForPersonResearchGrant("inside");
+        List<Map<String, Object>> outsideData = getRegionalFullTimeFacultyForPersonResearchGrant("outside");
 
-    public List<Map<String, Object>> getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant() throws JsonProcessingException {
-        String xmlResponse = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlDivCd", schlDivCd)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        // region + year 기준으로 Map 생성
+        Map<String, Map<Integer, Double>> insideMap = insideData.stream()
+                .collect(Collectors.groupingBy(
+                        m -> (String) m.get("region"),
+                        Collectors.toMap(
+                                m -> (Integer) m.get("year"),
+                                m -> (Double) m.get("value")
+                        )
+                ));
 
-        // XML → JSON 파싱
-        XmlMapper xmlMapper = new XmlMapper();
-        JsonNode root = xmlMapper.readTree(xmlResponse);
-
-        // item 배열 탐색
-        JsonNode items = root.path("body").path("items").path("item");
+        Map<String, Map<Integer, Double>> outsideMap = outsideData.stream()
+                .collect(Collectors.groupingBy(
+                        m -> (String) m.get("region"),
+                        Collectors.toMap(
+                                m -> (Integer) m.get("year"),
+                                m -> (Double) m.get("value")
+                        )
+                ));
 
         List<Map<String, Object>> results = new ArrayList<>();
 
-        for (JsonNode item : items) {
-            String region = item.path("znNm").asText();
+        for (String region : insideMap.keySet()) {
+            Map<Integer, Double> insideYears = insideMap.get(region);
+            Map<Integer, Double> outsideYears = outsideMap.getOrDefault(region, Map.of());
 
-            // 전체 / 수도권 / 비수도권만 필터
-            if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
-                Map<String, Object> map2023 = new HashMap<>();
-                map2023.put("year", 2023);
-                map2023.put("value", item.path("indctFirstVal").asDouble());
-                map2023.put("region", region);
-                results.add(map2023);
+            for (int year : insideYears.keySet()) {
+                double insideVal = insideYears.get(year);
+                double outsideVal = outsideYears.getOrDefault(year, 0.0);
 
-                Map<String, Object> map2024 = new HashMap<>();
-                map2024.put("year", 2024);
-                map2024.put("value", item.path("indctSecondVal").asDouble());
-                map2024.put("region", region);
-                results.add(map2024);
+                Map<String, Object> map = new HashMap<>();
+                map.put("region", region);
+                map.put("year", year);
+                map.put("inside", insideVal);
+                map.put("outside", outsideVal);
+                map.put("gap", outsideVal - insideVal);
+
+                // 전년 대비 증가량 계산 (2024년만)
+                if (year == 2024) {
+                    double prevYearInside = insideYears.getOrDefault(2023, 0.0);
+                    map.put("increase_inside", insideVal - prevYearInside);
+
+                    double prevYearOutside = outsideYears.getOrDefault(2023, 0.0);
+                    map.put("increase_outside", outsideVal - prevYearOutside);
+                }
+
+                results.add(map);
             }
         }
 
