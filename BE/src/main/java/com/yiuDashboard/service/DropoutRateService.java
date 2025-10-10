@@ -14,10 +14,21 @@ public class DropoutRateService {
     private final DropoutRateRepository repository;
 
     public List<DropoutRateDTO> getDropoutStats(int year) {
-        return repository.findDropoutStatsByYear(year);
+        List<Object[]> result = repository.findDropoutStatsByYear(year);
+        return result.stream()
+                .map(r -> new DropoutRateDTO(
+                        (String) r[0],
+                        ((Number) r[1]).intValue(),
+                        ((Number) r[2]).doubleValue(),
+                        ((Number) r[3]).intValue(),
+                        ((Number) r[4]).doubleValue(),
+                        ((Number) r[5]).intValue(),
+                        ((Number) r[6]).doubleValue()
+                ))
+                .toList();
     }
 
-    public DropoutRateDTO getDropoutDetail(int year, String dept) {
-        return repository.getDropoutDetail(year, dept);
+    public DropoutRateDTO getDropoutDetail(int year, int deptId) {
+        return repository.getDropoutDetail(year, deptId);
     }
 }

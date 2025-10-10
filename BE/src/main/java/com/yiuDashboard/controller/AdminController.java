@@ -110,8 +110,8 @@ public class AdminController {
 
 //    학과별 중도탈락현황 (학과별 상세)
     @GetMapping("/dropout/detail")
-    public DropoutRateDTO getDropoutDetail(@RequestParam int year, @RequestParam String dept) {
-        return dropoutRateService.getDropoutDetail(year, dept);
+    public DropoutRateDTO getDropoutDetail(@RequestParam int year, @RequestParam int deptId) {
+        return dropoutRateService.getDropoutDetail(year, deptId);
     }
 
 //    학과별 재학생 수
