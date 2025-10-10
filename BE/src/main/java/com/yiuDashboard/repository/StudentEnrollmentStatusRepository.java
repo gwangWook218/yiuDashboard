@@ -18,12 +18,9 @@ public interface StudentEnrollmentStatusRepository extends JpaRepository<Student
                 es.id.year, d.department,
                 (es.enrolledInMale + es.enrolledInFemale + es.enrolledOutMale + es.enrolledOutFemale),
                 (es.enrolledInMale + es.enrolledInFemale + es.enrolledOutMale + es.enrolledOutFemale)
-                - COALESCE(
-                    (SELECT es2.enrolledInMale + es2.enrolledInFemale + es2.enrolledOutMale + es2.enrolledOutFemale
+                - (SELECT es2.enrolledInMale + es2.enrolledInFemale + es2.enrolledOutMale + es2.enrolledOutFemale
                     FROM StudentEnrollmentStatus es2
                     WHERE es2.id.year= :year - 1 and es2.id.departmentId = :deptId),
-                  0
-                ),
                 (SELECT AVG(es3.enrolledInMale + es3.enrolledInFemale + es3.enrolledOutMale + es3.enrolledOutFemale)
                     FROM StudentEnrollmentStatus es3
                     WHERE es3.id.departmentId = :deptId
