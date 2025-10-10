@@ -28,16 +28,38 @@ public class FacultyService {
     private String schlDivCd;
 
 //    전임교원 1인당 학생 수
-    public Mono<String> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(int year, String schlId) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlId", schlId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
+
+        List<String> schlIds = List.of("0000156", "0000109", "0000051");
+        List<Integer> years = List.of(2022, 2023, 2024);
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (String schlId : schlIds) {
+            for (int year : years) {
+                String xmlResponse = webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent")
+                                .queryParam("ServiceKey", serviceKey)
+                                .queryParam("schlId", schlId)
+                                .queryParam("svyYr", year)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+
+                XmlMapper xmlMapper = new XmlMapper();
+                JsonNode root = xmlMapper.readTree(xmlResponse);
+                JsonNode items = root.path("body").path("items").path("item");
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("year", items.path("svyYr").asInt());
+                map.put("schlKrnNm", items.path("schlKrnNm").asText());
+                map.put("value", items.path("indctVal1").asDouble());
+                results.add(map);
+            }
+        }
+
+        return results;
     }
 
     public List<Map<String, Object>> getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
@@ -83,18 +105,35 @@ public class FacultyService {
     }
 
 //    전임교원 강의담당비율
-    public Mono<String> getComparisonLectureChargeRatio(int year, String schlId) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getComparisonLectureChargeRatio")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 999)
-                        .queryParam("schlId", schlId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    public List<Map<String, Object>> getComparisonLectureChargeRatio() throws JsonProcessingException {
+
+        List<Integer> years = List.of(2022, 2023, 2024);
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (int year : years) {
+            String xmlResponse = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/EducationResearchService/getComparisonLectureChargeRatio")
+                            .queryParam("ServiceKey", serviceKey)
+                            .queryParam("schlId", "0000156")
+                            .queryParam("svyYr", year)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            XmlMapper xmlMapper = new XmlMapper();
+            JsonNode root = xmlMapper.readTree(xmlResponse);
+            JsonNode items = root.path("body").path("items").path("item");
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("year", items.path("svyYr").asInt());
+            map.put("schlKrnNm", items.path("schlKrnNm").asText());
+            map.put("value", items.path("indctVal1").asDouble());
+            results.add(map);
+        }
+
+        return results;
     }
 
     public List<Map<String, Object>> getRegionalLectureChargeRatio() throws JsonProcessingException {
@@ -285,17 +324,17 @@ public class FacultyService {
                 Map<String, Object> map = new HashMap<>();
                 map.put("region", region);
                 map.put("year", year);
-                map.put("inside", insideVal);
-                map.put("outside", outsideVal);
-                map.put("gap", outsideVal - insideVal);
+                map.put("inside", Math.round(insideVal));
+                map.put("outside", Math.round(outsideVal));
+                map.put("gap", Math.round(outsideVal - insideVal));
 
                 // 전년 대비 증가량 계산 (2024년만)
                 if (year == 2024) {
                     double prevYearInside = insideYears.getOrDefault(2023, 0.0);
-                    map.put("increase_inside", insideVal - prevYearInside);
+                    map.put("increase_inside", Math.round(insideVal - prevYearInside));
 
                     double prevYearOutside = outsideYears.getOrDefault(2023, 0.0);
-                    map.put("increase_outside", outsideVal - prevYearOutside);
+                    map.put("increase_outside", Math.round(outsideVal - prevYearOutside));
                 }
 
                 results.add(map);

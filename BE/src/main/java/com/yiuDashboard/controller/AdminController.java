@@ -25,8 +25,8 @@ public class AdminController {
 //    전임교원 확보 현황
 //    대학비교통계
     @GetMapping("/ensure/compare")
-    public String getComparisonFullTimeFacultyEnsureCrntSt(@RequestParam int year, @RequestParam int indctId, @RequestParam String schlId) {
-        return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonFullTimeFacultyEnsureCrntSt());
     }
 
 //    지역별통계
@@ -42,59 +42,60 @@ public class AdminController {
     }
 
 //    전임교원 1인당 학생 수
-    @GetMapping("/stdntNum/compare")
-    public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(year, schlId).block();
+    @GetMapping("/student-ratio/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent());
     }
 
-    @GetMapping("/stdntNum/region")
-    public String getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent() {
-        return adminService.getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent().block();
+    @GetMapping("/student-ratio/region")
+    public ResponseEntity<List<Map<String, Object>>> getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent());
     }
 
 //    전임교원 강의담당비율
-    @GetMapping("/lecRatio/compare")
-    public String getComparisonLectureChargeRatio(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonLectureChargeRatio(year, schlId).block();
+    @GetMapping("/lecture-ratio/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonLectureChargeRatio() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonLectureChargeRatio());
     }
 
-    @GetMapping("/lecRatio/region")
-    public String getRegionalLectureChargeRatio() {
-        return adminService.getRegionalLectureChargeRatio().block();
+    @GetMapping("/lecture-ratio/region")
+    public ResponseEntity<List<Map<String, Object>>> getRegionalLectureChargeRatio() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalLectureChargeRatio());
     }
 
 //    충원률(대학비교통계)
-    @GetMapping("/enrolledStdnt/compare")
-    public String getComparisonEnrolledStudentEnsureRate(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonEnrolledStudentEnsureRate(year, schlId).block();
+    @GetMapping("/enroll-rate/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonEnrolledStudentEnsureRate() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonEnrolledStudentEnsureRate());
     }
+
 //    입시 경쟁률(대학비교통계)
-    @GetMapping("/freshCompetite/compare")
-    public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate(year, schlId).block();
+    @GetMapping("/competition/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonInsideFixedNumberFreshmanCompetitionRate() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate());
     }
 
 //    등록률(대학비교통계)
     @GetMapping("/register/compare")
-    public String getComparisonEntranceModelLastRegistrationRatio(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonEntranceModelLastRegistrationRatio(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonEntranceModelLastRegistrationRatio() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonEntranceModelLastRegistrationRatio());
     }
 
 //    취업률
     @GetMapping("/graduater/employ")
-    public String getNoticeGraduateEmploymentRate(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getNoticeGraduateEmploymentRate(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getNoticeGraduateEmploymentRate() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getNoticeGraduateEmploymentRate());
     }
 
 //    중도탈락 학생비율
     @GetMapping("/dropout/compare")
-    public String getComparisonDropOutStudentCrntSt(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonDropOutStudentCrntSt(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonDropOutStudentCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonDropOutStudentCrntSt());
     }
 
     @GetMapping("/dropout/region")
-    public String getRegionalDropOutStudentCrntSt() {
-        return adminService.getRegionalDropOutStudentCrntSt().block();
+    public ResponseEntity<List<Map<String, Object>>> getRegionalDropOutStudentCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalDropOutStudentCrntSt());
     }
 
     @GetMapping("/dropout/notice")
@@ -122,35 +123,35 @@ public class AdminController {
 
 //    1인당 장학금 지급액
     @GetMapping("/scholarship/per/compare")
-    public String getComparisonScholarshipBenefitCrntSt(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonScholarshipBenefitCrntSt(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonScholarshipBenefitCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonScholarshipBenefitCrntSt());
     }
 
     @GetMapping("/scholarship/per/region")
-    public String getRegionalScholarshipBenefitCrntSt() {
-        return adminService.getRegionalScholarshipBenefitCrntSt().block();
+    public ResponseEntity<List<Map<String, Object>>> getRegionalScholarshipBenefitCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalScholarshipBenefitCrntSt());
     }
 
 //    학생 1인당 교육비(대학비교통계)
     @GetMapping("/education/cost/compare")
-    public String getComparisonEducationalExpensesReductionCrntSt(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonEducationalExpensesReductionCrntSt(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonEducationalExpensesReductionCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonEducationalExpensesReductionCrntSt());
     }
 
     @GetMapping("/education/cost/region")
-    public String getRegionalEducationalExpensesReductionCrntSt() {
-        return adminService.getRegionalEducationalExpensesReductionCrntSt().block();
+    public ResponseEntity<List<Map<String, Object>>> getRegionalEducationalExpensesReductionCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalEducationalExpensesReductionCrntSt());
     }
 
 //    기숙사 수용률
     @GetMapping("/dormitory/compare")
-    public String getComparisonDormitoryAcceptanceCrntSt(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonDormitoryAcceptanceCrntSt(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonDormitoryAcceptanceCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonDormitoryAcceptanceCrntSt());
     }
 
     @GetMapping("/dormitory/region")
-    public String getRegionalDormitoryAcceptanceCrntSt() {
-        return adminService.getRegionalDormitoryAcceptanceCrntSt().block();
+    public ResponseEntity<List<Map<String, Object>>> getRegionalDormitoryAcceptanceCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getRegionalDormitoryAcceptanceCrntSt());
     }
 
 //    졸업생 취업률

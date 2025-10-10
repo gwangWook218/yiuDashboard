@@ -29,8 +29,8 @@ public class FacultyController {
 
 //    전임교원 확보 현황
     @GetMapping("/fulltime/ensure/compare")
-    public String getComparisonFullTimeFacultyEnsureCrntSt(@RequestParam int year, @RequestParam int indctId, @RequestParam String schlId) {
-        return adminService.getComparisonFullTimeFacultyEnsureCrntSt(year, indctId, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonFullTimeFacultyEnsureCrntSt());
     }
 
     @GetMapping("/fulltime/ensure/region")
@@ -40,8 +40,8 @@ public class FacultyController {
 
     //    전임교원 1인당 학생 수
     @GetMapping("/student-ratio/compare")
-    public String getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(@RequestParam int year, @RequestParam String schlId) {
-        return facultyService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
+        return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent());
     }
 
     @GetMapping("/student-ratio/region")
@@ -51,8 +51,8 @@ public class FacultyController {
 
     //    전임교원 강의담당비율
     @GetMapping("/lecture-ratio/compare")
-    public String getComparisonLectureChargeRatio(@RequestParam int year, @RequestParam String schlId) {
-        return facultyService.getComparisonLectureChargeRatio(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonLectureChargeRatio() throws JsonProcessingException {
+        return ResponseEntity.ok(facultyService.getComparisonLectureChargeRatio());
     }
 
     @GetMapping("/lecture-ratio/region")

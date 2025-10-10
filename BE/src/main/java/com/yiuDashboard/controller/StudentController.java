@@ -1,17 +1,18 @@
 package com.yiuDashboard.controller;
 
-import com.yiuDashboard.dto.EnrollmentSummaryDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
 import com.yiuDashboard.service.AdminService;
 import com.yiuDashboard.service.EmploymentRateService;
-import com.yiuDashboard.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/student")
@@ -22,20 +23,21 @@ public class StudentController {
     private final EmploymentRateService employmentRateService;
 
     //    충원률(대학비교통계)
-    @GetMapping("/enrolledStdnt/compare")
-    public String getComparisonEnrolledStudentEnsureRate(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonEnrolledStudentEnsureRate(year, schlId).block();
+    @GetMapping("/enroll-rate/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonEnrolledStudentEnsureRate() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonEnrolledStudentEnsureRate());
     }
+
     //    입시 경쟁률(대학비교통계)
-    @GetMapping("/freshCompetite/compare")
-    public String getComparisonInsideFixedNumberFreshmanCompetitionRate(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate(year, schlId).block();
+    @GetMapping("/competition/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonInsideFixedNumberFreshmanCompetitionRate() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonInsideFixedNumberFreshmanCompetitionRate());
     }
 
     //    등록률(대학비교통계)
     @GetMapping("/register/compare")
-    public String getComparisonEntranceModelLastRegistrationRatio(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getComparisonEntranceModelLastRegistrationRatio(year, schlId).block();
+    public ResponseEntity<List<Map<String, Object>>> getComparisonEntranceModelLastRegistrationRatio() throws JsonProcessingException {
+        return ResponseEntity.ok(adminService.getComparisonEntranceModelLastRegistrationRatio());
     }
 
 //    졸업생 취업률
