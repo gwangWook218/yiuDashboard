@@ -25,7 +25,7 @@ public class AdminController {
 //    전임교원 확보 현황
 //    대학비교통계
     @GetMapping("/ensure/compare")
-    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
         return ResponseEntity.ok(adminService.getComparisonFullTimeFacultyEnsureCrntSt());
     }
 

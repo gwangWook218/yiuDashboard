@@ -26,14 +26,15 @@ public class AdminService {
     @Value("${univapi.school-divCd}")
     private String schlDivCd;
 
-    public List<Map<String, Object>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+    public List<Map<String, Object>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
 
         List<String> schlIds = List.of("0000156", "0000109", "0000051");
         List<Integer> indctIds = List.of(66, 67);
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
-        for (String schlId : schlIds) {
-            for (int year : years) {
+
+        for (int year : years) {
+            for (String schlId : schlIds) {
                 for (int indctId : indctIds) {
                     String xmlResponse = webClient.get()
                             .uri(uriBuilder -> uriBuilder
@@ -57,6 +58,8 @@ public class AdminService {
                     map.put("schlKrnNm", items.path("schlKrnNm").asText());
                     map.put("value", items.path("indctVal1").asDouble());
                     results.add(map);
+
+                    Thread.sleep(500);
                 }
             }
         }

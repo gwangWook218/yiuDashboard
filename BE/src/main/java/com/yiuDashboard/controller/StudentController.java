@@ -2,8 +2,10 @@ package com.yiuDashboard.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
+import com.yiuDashboard.dto.grade.GraduateGradeDto;
 import com.yiuDashboard.service.AdminService;
 import com.yiuDashboard.service.EmploymentRateService;
+import com.yiuDashboard.service.GraduateGradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ public class StudentController {
 
     private final AdminService adminService;
     private final EmploymentRateService employmentRateService;
+    private final GraduateGradeService graduateGradeService;
 
     //    충원률(대학비교통계)
     @GetMapping("/enroll-rate/compare")
@@ -44,5 +47,11 @@ public class StudentController {
     @GetMapping("/graduates/employment-rates")
     public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
         return employmentRateService.getGraduateStats(year, deptId);
+    }
+
+//    졸업생의 졸업 성적 분포
+    @GetMapping("graduates/grade-distribution")
+    public GraduateGradeDto findGraduateGradeByYearAndDept(@RequestParam int year, @RequestParam String dept) {
+        return graduateGradeService.findGraduateGradeByYearAndDept(year, dept);
     }
 }

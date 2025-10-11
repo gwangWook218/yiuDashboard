@@ -29,7 +29,7 @@ public class FacultyController {
 
 //    전임교원 확보 현황
     @GetMapping("/fulltime/ensure/compare")
-    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
         return ResponseEntity.ok(adminService.getComparisonFullTimeFacultyEnsureCrntSt());
     }
 
@@ -61,15 +61,15 @@ public class FacultyController {
     }
 
 //    전임교원 1인당 연구비
-    @GetMapping("/research/funding-per-faculty/compare")
-    public ResponseEntity<?> getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant(
-            @RequestParam String scope) throws JsonProcessingException {
-        return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyForPersonResearchGrant(scope));
-    }
-
     @GetMapping("/research/funding-per-faculty/region")
     public ResponseEntity<?> getFacultyWithGap() throws JsonProcessingException {
         return ResponseEntity.ok(facultyService.getFacultyWithGap());
+    }
+
+//    전임교원 연구 실적 현황
+    @GetMapping("research/performance/compare")
+    public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyResearchCrntSt() throws JsonProcessingException, InterruptedException {
+        return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyResearchCrntSt());
     }
 
 //    재학생 수
