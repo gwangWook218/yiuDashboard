@@ -3,10 +3,9 @@ package com.yiuDashboard.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiuDashboard.dto.EnrollmentSummaryDto;
 import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
-import com.yiuDashboard.service.AdminService;
-import com.yiuDashboard.service.EmploymentRateService;
-import com.yiuDashboard.service.EnrollmentService;
-import com.yiuDashboard.service.FacultyService;
+import com.yiuDashboard.dto.grade.GradeRangeDto;
+import com.yiuDashboard.dto.grade.GradeSummaryDto;
+import com.yiuDashboard.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +25,7 @@ public class FacultyController {
     private final FacultyService facultyService;
     private final EnrollmentService enrollmentService;
     private final EmploymentRateService employmentRateService;
+    private final GradeDistributionService gradeDistributionService;
 
 //    전임교원 확보 현황
     @GetMapping("/fulltime/ensure/compare")
@@ -82,5 +82,25 @@ public class FacultyController {
     @GetMapping("/department/graduates/employment-rates")
     public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
         return employmentRateService.getGraduateStats(year, deptId);
+    }
+
+    // 학년, 학과별 총 학생수 + 평균 GPA
+    @GetMapping("/summary")
+    public GradeSummaryDto getGradeSummary(
+            @RequestParam int year,
+            @RequestParam int semester,
+            @RequestParam String dept
+    ) {
+        return gradeDistributionService.getGradeSummary(year, semester, dept);
+    }
+
+    // 학년, 학과별 점수 구간별 학생 수
+    @GetMapping("/range")
+    public List<GradeRangeDto> getGradeRangeSummary(
+            @RequestParam int year,
+            @RequestParam int semester,
+            @RequestParam String dept
+    ) {
+        return gradeDistributionService.getGradeRangeSummary(year, semester, dept);
     }
 }
