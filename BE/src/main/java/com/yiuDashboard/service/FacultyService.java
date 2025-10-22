@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +16,7 @@ import java.util.stream.Collectors;
 public class FacultyService {
 
     private final WebClient webClient;
+    private final XmlMapper xmlMapper = new XmlMapper();
 
     @Value("${univapi.service-key}")
     private String serviceKey;
@@ -26,305 +24,352 @@ public class FacultyService {
     @Value("${univapi.school-divCd}")
     private String schlDivCd;
 
-//    전임교원 1인당 학생 수
-    public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
+    /** 학교 ID (기존엔 하드코드 0000156) — 프로퍼티로 뺄 수 있으면 가장 좋음 */
+    @Value("${univapi.schlId:0000156}")
+    private String schlId;
+
+    /** 외부 API 쿨다운(ms) — 과도한 호출 제한 회피용 */
+    @Value("${univapi.cooldown-ms:300}")
+    private long cooldownMs;
+
+    /* ---------------------------------------------
+     * 공통 유틸
+     * --------------------------------------------- */
+
+    private String fetchXml(String path, Map<String, Object> params) {
+        return webClient.get()
+                .uri(uriBuilder -> {
+                    var b = uriBuilder.path(path)
+                            .queryParam("ServiceKey", serviceKey);
+                    params.forEach(b::queryParam);
+                    return b.build();
+                })
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    /** body → items → item 노드 반환 (배열/단일 모두 대응) */
+    private List<JsonNode> items(String xml) throws JsonProcessingException {
+        if (xml == null || xml.isBlank()) return List.of();
+        JsonNode root = xmlMapper.readTree(xml);
+        JsonNode item = root.path("body").path("items").path("item");
+        if (item.isMissingNode() || item.isNull()) return List.of();
+        if (item.isArray()) {
+            List<JsonNode> r = new ArrayList<>();
+            item.forEach(r::add);
+            return r;
+        }
+        return List.of(item);
+    }
+
+    private int asInt(JsonNode n, String field, int def) {
+        JsonNode f = n.path(field);
+        return f.isMissingNode() || f.isNull() ? def : f.asInt(def);
+    }
+
+    private double asDouble(JsonNode n, String field, double def) {
+        JsonNode f = n.path(field);
+        if (f.isMissingNode() || f.isNull()) return def;
+        try { return Double.parseDouble(f.asText().replace(",", "")); }
+        catch (Exception e) { return def; }
+    }
+
+    private String asText(JsonNode n, String field) {
+        JsonNode f = n.path(field);
+        return (f.isMissingNode() || f.isNull()) ? "" : f.asText();
+    }
+
+    private Map<String, Object> mapOf(Object... kv) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        for (int i = 0; i + 1 < kv.length; i += 2) {
+            m.put(String.valueOf(kv[i]), kv[i + 1]);
+        }
+        return m;
+    }
+
+    private void cooldown() {
+        if (cooldownMs <= 0) return;
+        try { Thread.sleep(cooldownMs); } catch (InterruptedException ignored) {}
+    }
+
+    public List<Map<String, Object>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
+        List<Integer> years = List.of(2022, 2023, 2024);
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (int year : years) {
+            String xml = fetchXml(
+                    "/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt",
+                    Map.of("indctId", 66, "schlId", schlId, "svyYr", year)
+            );
+            List<JsonNode> its = items(xml);
+            if (!its.isEmpty()) {
+                JsonNode it = its.get(0);
+                results.add(mapOf(
+                        "year", asInt(it, "svyYr", year),
+                        "schlKrnNm", asText(it, "schlKrnNm"),
+                        "value", asDouble(it, "indctVal1", 0d)
+                ));
+            }
+            cooldown();
+        }
+        return results;
+    }
+
+    /* ---------------------------------------------
+     * 전임교원 1인당 학생 수 (연도별)
+     * API: /EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent
+     * 사용 필드: svyYr, schlKrnNm, indctVal1
+     * --------------------------------------------- */
+    public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent()
+            throws JsonProcessingException {
 
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (int year : years) {
-            String xmlResponse = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent")
-                            .queryParam("ServiceKey", serviceKey)
-                            .queryParam("schlId", "0000156")
-                            .queryParam("svyYr", year)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            XmlMapper xmlMapper = new XmlMapper();
-            JsonNode root = xmlMapper.readTree(xmlResponse);
-            JsonNode items = root.path("body").path("items").path("item");
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("year", items.path("svyYr").asInt());
-            map.put("schlKrnNm", items.path("schlKrnNm").asText());
-            map.put("value", items.path("indctVal1").asDouble());
-            results.add(map);
+            String xml = fetchXml(
+                    "/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent",
+                    Map.of("schlId", schlId, "svyYr", year)
+            );
+            List<JsonNode> its = items(xml);
+            if (!its.isEmpty()) {
+                JsonNode it = its.get(0);
+                results.add(mapOf(
+                        "year", asInt(it, "svyYr", year),
+                        "schlKrnNm", asText(it, "schlKrnNm"),
+                        "value", asDouble(it, "indctVal1", 0d)
+                ));
+            }
+            cooldown();
         }
-
         return results;
     }
 
-    public List<Map<String, Object>> getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
-        String xmlResponse = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlDivCd", schlDivCd)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+    /* ---------------------------------------------
+     * 지역별 전임교원 1인당 학생 수 (전체/수도권/비수도권, 2023/2024)
+     * API: /EducationResearchService/getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent
+     * 사용 필드: znNm, indctFirstVal(2023), indctSecondVal(2024)
+     * --------------------------------------------- */
+    public List<Map<String, Object>> getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent()
+            throws JsonProcessingException {
 
-        // XML → JSON 파싱
-        XmlMapper xmlMapper = new XmlMapper();
-        JsonNode root = xmlMapper.readTree(xmlResponse);
+        String xml = fetchXml(
+                "/EducationResearchService/getRegionalFullTimeFacultyForPersonStudentNumberEnrolledStudent",
+                Map.of("schlDivCd", schlDivCd)
+        );
 
-        // item 배열 탐색
-        JsonNode items = root.path("body").path("items").path("item");
-
+        List<String> allow = List.of("전체", "수도권", "비수도권");
         List<Map<String, Object>> results = new ArrayList<>();
 
-        for (JsonNode item : items) {
-            String region = item.path("znNm").asText();
+        for (JsonNode it : items(xml)) {
+            String region = asText(it, "znNm");
+            if (!allow.contains(region)) continue;
 
-            // 전체 / 수도권 / 비수도권만 필터
-            if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
-                Map<String, Object> map2023 = new HashMap<>();
-                map2023.put("year", 2023);
-                map2023.put("value", item.path("indctFirstVal").asDouble());
-                map2023.put("region", region);
-                results.add(map2023);
-
-                Map<String, Object> map2024 = new HashMap<>();
-                map2024.put("year", 2024);
-                map2024.put("value", item.path("indctSecondVal").asDouble());
-                map2024.put("region", region);
-                results.add(map2024);
-            }
+            results.add(mapOf("year", 2023, "region", region, "value", asDouble(it, "indctFirstVal", 0d)));
+            results.add(mapOf("year", 2024, "region", region, "value", asDouble(it, "indctSecondVal", 0d)));
         }
-
         return results;
     }
 
-//    전임교원 강의담당비율
+    /* ---------------------------------------------
+     * 전임교원 강의담당비율 (연도별)
+     * API: /EducationResearchService/getComparisonLectureChargeRatio
+     * 사용 필드: svyYr, schlKrnNm, indctVal1
+     * --------------------------------------------- */
     public List<Map<String, Object>> getComparisonLectureChargeRatio() throws JsonProcessingException {
+        List<Integer> years = List.of(2022, 2023, 2024);
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (int year : years) {
+            String xml = fetchXml(
+                    "/EducationResearchService/getComparisonLectureChargeRatio",
+                    Map.of("schlId", schlId, "svyYr", year)
+            );
+            List<JsonNode> its = items(xml);
+            if (!its.isEmpty()) {
+                JsonNode it = its.get(0);
+                results.add(mapOf(
+                        "year", asInt(it, "svyYr", year),
+                        "schlKrnNm", asText(it, "schlKrnNm"),
+                        "value", asDouble(it, "indctVal1", 0d)
+                ));
+            }
+            cooldown();
+        }
+        return results;
+    }
+
+    /* ---------------------------------------------
+     * 지역별 전임교원 강의담당비율 (전체/수도권/비수도권, 2023/2024)
+     * API: /EducationResearchService/getRegionalLectureChargeRatio
+     * 사용 필드: fieldVal7(지역), fieldVal4(2023), fieldVal5(2024)
+     * --------------------------------------------- */
+    public List<Map<String, Object>> getRegionalLectureChargeRatio() throws JsonProcessingException {
+        String xml = fetchXml(
+                "/EducationResearchService/getRegionalLectureChargeRatio",
+                Map.of("schlDivCd", schlDivCd)
+        );
+
+        List<String> allow = List.of("전체", "수도권", "비수도권");
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (JsonNode it : items(xml)) {
+            String region = asText(it, "fieldVal7");
+            if (!allow.contains(region)) continue;
+
+            results.add(mapOf("year", 2023, "region", region, "value", asDouble(it, "fieldVal4", 0d)));
+            results.add(mapOf("year", 2024, "region", region, "value", asDouble(it, "fieldVal5", 0d)));
+        }
+        return results;
+    }
+
+    /* ---------------------------------------------
+     * 전임교원 1인당 연구비 (교내/교외, 지역별 2023/2024)
+     * API: inside → getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant
+     *      outside→ getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant
+     * 사용 필드: znNm, indctFirstVal(2023), indctSecondVal(2024)
+     * --------------------------------------------- */
+    public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonResearchGrant(String scope)
+            throws JsonProcessingException {
+
+        final String path = switch (scope.toLowerCase()) {
+            case "inside"  -> "/EducationResearchService/getComparisonFullTimeFacultyInsideOfSchoolForPersonResearchGrant";
+            case "outside" -> "/EducationResearchService/getComparisonFullTimeFacultyOutsideOfSchoolForPersonResearchGrant";
+            default -> throw new IllegalArgumentException("Invalid scope: " + scope);
+        };
 
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (int year : years) {
-            String xmlResponse = webClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/EducationResearchService/getComparisonLectureChargeRatio")
-                            .queryParam("ServiceKey", serviceKey)
-                            .queryParam("schlId", "0000156")
-                            .queryParam("svyYr", year)
-                            .build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            XmlMapper xmlMapper = new XmlMapper();
-            JsonNode root = xmlMapper.readTree(xmlResponse);
-            JsonNode items = root.path("body").path("items").path("item");
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("year", items.path("svyYr").asInt());
-            map.put("schlKrnNm", items.path("schlKrnNm").asText());
-            map.put("value", items.path("indctVal1").asDouble());
-            results.add(map);
+            String xml = fetchXml(
+                    path,
+                    Map.of("schlId", schlId, "svyYr", year)
+            );
+            List<JsonNode> its = items(xml);
+            if (!its.isEmpty()) {
+                JsonNode it = its.get(0);
+                results.add(mapOf(
+                        "year", asInt(it, "svyYr", year),
+                        "schlKrnNm", asText(it, "schlKrnNm"),
+                        "value", asDouble(it, "indctVal1", 0d)
+                ));
+            }
+            cooldown();
         }
-
         return results;
     }
 
-    public List<Map<String, Object>> getRegionalLectureChargeRatio() throws JsonProcessingException {
-        String xmlResponse = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getRegionalLectureChargeRatio")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlDivCd", schlDivCd)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+    public List<Map<String, Object>> getRegionalFullTimeFacultyForPersonResearchGrant(String scope)
+            throws JsonProcessingException {
 
-        // XML → JSON 파싱
-        XmlMapper xmlMapper = new XmlMapper();
-        JsonNode root = xmlMapper.readTree(xmlResponse);
+        final String path = switch (scope.toLowerCase()) {
+            case "inside"  -> "/EducationResearchService/getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant";
+            case "outside" -> "/EducationResearchService/getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant";
+            default -> throw new IllegalArgumentException("Invalid scope: " + scope);
+        };
 
-        // item 배열 탐색
-        JsonNode items = root.path("body").path("items").path("item");
+        String xml = fetchXml(path, Map.of("schlDivCd", schlDivCd));
 
+        List<String> allow = List.of("전체", "수도권", "비수도권");
         List<Map<String, Object>> results = new ArrayList<>();
 
-        for (JsonNode item : items) {
-            String region = item.path("fieldVal7").asText();
+        for (JsonNode it : items(xml)) {
+            String region = asText(it, "znNm");
+            if (!allow.contains(region)) continue;
 
-            // 전체 / 수도권 / 비수도권만 필터
-            if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
-                Map<String, Object> map2023 = new HashMap<>();
-                map2023.put("year", 2023);
-                map2023.put("value", item.path("fieldVal4").asDouble());
-                map2023.put("region", region);
-                results.add(map2023);
+            double v23 = asDouble(it, "indctFirstVal", 0d);
+            double v24 = asDouble(it, "indctSecondVal", 0d);
 
-                Map<String, Object> map2024 = new HashMap<>();
-                map2024.put("year", 2024);
-                map2024.put("value", item.path("fieldVal5").asDouble());
-                map2024.put("region", region);
-                results.add(map2024);
-            }
+            results.add(mapOf("year", 2023, "region", region, "value", v23));
+            results.add(mapOf("year", 2024, "region", region, "value", v24, "increase", v24 - v23));
         }
-
         return results;
     }
 
-//    전임교원 1인당 연구비
-    public List<Map<String, Object>> getRegionalFullTimeFacultyForPersonResearchGrant(String scope) throws JsonProcessingException {
-        String path;
-        if ("inside".equalsIgnoreCase(scope)) {
-            path = "/EducationResearchService/getRegionalFullTimeFacultyInsideOfSchoolForPersonResearchGrant";
-        } else if ("outside".equalsIgnoreCase(scope)) {
-            path = "/EducationResearchService/getRegionalFullTimeFacultyOutsideOfSchoolForPersonResearchGrant";
-        } else {
-            throw new IllegalArgumentException("Invalid scope: " + scope);
-        }
-
-        String xmlResponse = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(path)
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlDivCd", schlDivCd)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
-        // XML → JSON 파싱
-        XmlMapper xmlMapper = new XmlMapper();
-        JsonNode root = xmlMapper.readTree(xmlResponse);
-
-        // item 배열 탐색
-        JsonNode items = root.path("body").path("items").path("item");
-
-        List<Map<String, Object>> results = new ArrayList<>();
-
-        for (JsonNode item : items) {
-            String region = item.path("znNm").asText();
-
-            // 전체 / 수도권 / 비수도권만 필터
-            if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
-                double val2023 = item.path("indctFirstVal").asDouble();
-                double val2024 = item.path("indctSecondVal").asDouble();
-
-                Map<String, Object> map2023 = new HashMap<>();
-                map2023.put("year", 2023);
-                map2023.put("value", val2023);
-                map2023.put("region", region);
-                results.add(map2023);
-
-                Map<String, Object> map2024 = new HashMap<>();
-                map2024.put("year", 2024);
-                map2024.put("value", val2024);
-                map2024.put("region", region);
-                map2024.put("increase", val2024 - val2023);
-                results.add(map2024);
-            }
-        }
-
-        return results;
-    }
-
+    /* ---------------------------------------------
+     * 교내/교외 연구비 묶어서 갭 계산
+     * --------------------------------------------- */
     public List<Map<String, Object>> getFacultyWithGap() throws JsonProcessingException {
-        // 교내/교외 데이터 가져오기
         List<Map<String, Object>> insideData = getRegionalFullTimeFacultyForPersonResearchGrant("inside");
         List<Map<String, Object>> outsideData = getRegionalFullTimeFacultyForPersonResearchGrant("outside");
 
-        // region + year 기준으로 Map 생성
-        Map<String, Map<Integer, Double>> insideMap = insideData.stream()
-                .collect(Collectors.groupingBy(
-                        m -> (String) m.get("region"),
-                        Collectors.toMap(
-                                m -> (Integer) m.get("year"),
-                                m -> (Double) m.get("value")
-                        )
-                ));
-
-        Map<String, Map<Integer, Double>> outsideMap = outsideData.stream()
-                .collect(Collectors.groupingBy(
-                        m -> (String) m.get("region"),
-                        Collectors.toMap(
-                                m -> (Integer) m.get("year"),
-                                m -> (Double) m.get("value")
-                        )
-                ));
+        Map<String, Map<Integer, Double>> insideMap = toYearMap(insideData);
+        Map<String, Map<Integer, Double>> outsideMap = toYearMap(outsideData);
 
         List<Map<String, Object>> results = new ArrayList<>();
-
         for (String region : insideMap.keySet()) {
-            Map<Integer, Double> insideYears = insideMap.get(region);
-            Map<Integer, Double> outsideYears = outsideMap.getOrDefault(region, Map.of());
+            Map<Integer, Double> inYears = insideMap.get(region);
+            Map<Integer, Double> outYears = outsideMap.getOrDefault(region, Map.of());
 
-            for (int year : insideYears.keySet()) {
-                double insideVal = insideYears.get(year);
-                double outsideVal = outsideYears.getOrDefault(year, 0.0);
+            for (int year : inYears.keySet()) {
+                double inVal = inYears.getOrDefault(year, 0d);
+                double outVal = outYears.getOrDefault(year, 0d);
 
-                Map<String, Object> map = new HashMap<>();
-                map.put("region", region);
-                map.put("year", year);
-                map.put("inside", Math.round(insideVal));
-                map.put("outside", Math.round(outsideVal));
-                map.put("gap", Math.round(outsideVal - insideVal));
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("region", region);
+                row.put("year", year);
+                row.put("inside", Math.round(inVal));
+                row.put("outside", Math.round(outVal));
+                row.put("gap", Math.round(outVal - inVal));
 
-                // 전년 대비 증가량 계산 (2024년만)
                 if (year == 2024) {
-                    double prevYearInside = insideYears.getOrDefault(2023, 0.0);
-                    map.put("increase_inside", Math.round(insideVal - prevYearInside));
-
-                    double prevYearOutside = outsideYears.getOrDefault(2023, 0.0);
-                    map.put("increase_outside", Math.round(outsideVal - prevYearOutside));
+                    row.put("increase_inside", Math.round(inVal - inYears.getOrDefault(2023, 0d)));
+                    row.put("increase_outside", Math.round(outVal - outYears.getOrDefault(2023, 0d)));
                 }
-
-                results.add(map);
+                results.add(row);
             }
         }
-
         return results;
     }
 
-    public List<Map<String, Object>> getComparisonFullTimeFacultyResearchCrntSt() throws JsonProcessingException, InterruptedException {
+    private Map<String, Map<Integer, Double>> toYearMap(List<Map<String, Object>> list) {
+        return list.stream().collect(Collectors.groupingBy(
+                m -> Objects.toString(m.get("region"), ""),
+                Collectors.toMap(
+                        m -> (Integer) m.get("year"),
+                        m -> ((Number) m.get("value")).doubleValue(),
+                        (a, b) -> b, LinkedHashMap::new
+                )
+        ));
+    }
 
-        List<String> schlIds = List.of("0000156", "0000109", "0000051");
+    /* ---------------------------------------------
+     * 전임교원 연구 현황(복수 지표/학교/연도 루프)
+     * API: /EducationResearchService/getComparisonFullTimeFacultyResearchCrntSt
+     * 사용 필드: svyYr, indctId, schlKrnNm, indctVal1
+     * --------------------------------------------- */
+    public List<Map<String, Object>> getComparisonFullTimeFacultyResearchCrntSt()
+            throws JsonProcessingException {
+
+        List<String> schlIds = List.of(schlId, "0000109", "0000051");
         List<Integer> indctIds = List.of(66, 67);
         List<Integer> years = List.of(2022, 2023, 2024);
+
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (int year : years) {
-            for (String schlId : schlIds) {
+            for (String sId : schlIds) {
                 for (int indctId : indctIds) {
-                    String xmlResponse = webClient.get()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path("/EducationResearchService/getComparisonFullTimeFacultyResearchCrntSt")
-                                    .queryParam("ServiceKey", serviceKey)
-                                    .queryParam("indctId", indctId)
-                                    .queryParam("schlId", schlId)
-                                    .queryParam("svyYr", year)
-                                    .build())
-                            .retrieve()
-                            .bodyToMono(String.class)
-                            .block();
-
-                    XmlMapper xmlMapper = new XmlMapper();
-                    JsonNode root = xmlMapper.readTree(xmlResponse);
-                    JsonNode items = root.path("body").path("items").path("item");
-
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("year", items.path("svyYr").asInt());
-                    map.put("indctId", items.path("indctId").asInt());
-                    map.put("schlKrnNm", items.path("schlKrnNm").asText());
-                    map.put("value", items.path("indctVal1").asDouble());
-                    results.add(map);
-
-                    Thread.sleep(500);
+                    String xml = fetchXml(
+                            "/EducationResearchService/getComparisonFullTimeFacultyResearchCrntSt",
+                            Map.of("indctId", indctId, "schlId", sId, "svyYr", year)
+                    );
+                    List<JsonNode> its = items(xml);
+                    if (!its.isEmpty()) {
+                        JsonNode it = its.get(0);
+                        results.add(mapOf(
+                                "year", asInt(it, "svyYr", year),
+                                "indctId", asInt(it, "indctId", indctId),
+                                "schlKrnNm", asText(it, "schlKrnNm"),
+                                "value", asDouble(it, "indctVal1", 0d)
+                        ));
+                    }
+                    cooldown();
                 }
             }
         }
-
         return results;
     }
 }

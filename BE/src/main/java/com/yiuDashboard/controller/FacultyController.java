@@ -1,8 +1,7 @@
 package com.yiuDashboard.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yiuDashboard.dto.EnrollmentSummaryDto;
-import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
+import com.yiuDashboard.dto.gradEmployment.EmployAdmissionDto;
 import com.yiuDashboard.dto.grade.GradeRangeDto;
 import com.yiuDashboard.dto.grade.GradeSummaryDto;
 import com.yiuDashboard.service.*;
@@ -23,19 +22,23 @@ public class FacultyController {
 
     private final AdminService adminService;
     private final FacultyService facultyService;
-    private final EnrollmentService enrollmentService;
     private final EmploymentRateService employmentRateService;
     private final GradeDistributionService gradeDistributionService;
 
 //    전임교원 확보 현황
     @GetMapping("/fulltime/ensure/compare")
     public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
-        return ResponseEntity.ok(adminService.getComparisonFullTimeFacultyEnsureCrntSt());
+        return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyEnsureCrntSt());
     }
 
     @GetMapping("/fulltime/ensure/region")
     public ResponseEntity<List<Map<String, Object>>> getRegionalFullTimeFacultyEnsureCrntSt() throws JsonProcessingException {
         return ResponseEntity.ok(adminService.getRegionalFullTimeFacultyEnsureCrntSt());
+    }
+
+    @GetMapping("/fulltime/ensure/notice")
+    public List<Map<String, Object>> getNoticeFullTimeFacultyEnsureRate() throws JsonProcessingException {
+        return adminService.getNoticeFullTimeFacultyEnsureRate();
     }
 
     //    전임교원 1인당 학생 수
@@ -61,27 +64,26 @@ public class FacultyController {
     }
 
 //    전임교원 1인당 연구비
+    @GetMapping("/research/funding-per-faculty/compare")
+    public ResponseEntity<?> getComparisonFullTimeFacultyForPersonResearchGrant(@RequestParam String scope) throws JsonProcessingException {
+        return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyForPersonResearchGrant(scope));
+    }
+
     @GetMapping("/research/funding-per-faculty/region")
     public ResponseEntity<?> getFacultyWithGap() throws JsonProcessingException {
         return ResponseEntity.ok(facultyService.getFacultyWithGap());
     }
 
 //    전임교원 연구 실적 현황
-    @GetMapping("research/performance/compare")
+    @GetMapping("/research/performance/compare")
     public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyResearchCrntSt() throws JsonProcessingException, InterruptedException {
         return ResponseEntity.ok(facultyService.getComparisonFullTimeFacultyResearchCrntSt());
     }
 
-//    재학생 수
-    @GetMapping("/department/students/count")
-    public List<EnrollmentSummaryDto> findByYear(@RequestParam int year, @RequestParam int deptId) {
-        return enrollmentService.findByYear(year, deptId);
-    }
-
 //    졸업생 진학/취업 현황
     @GetMapping("/department/graduates/employment-rates")
-    public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
-        return employmentRateService.getGraduateStats(year, deptId);
+    public EmployAdmissionDto findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
+        return employmentRateService.getEmployAdmission(year, deptId);
     }
 
     // 학년, 학과별 총 학생수 + 평균 GPA

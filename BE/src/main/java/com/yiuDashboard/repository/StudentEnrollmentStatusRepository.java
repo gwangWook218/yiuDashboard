@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface StudentEnrollmentStatusRepository extends JpaRepository<StudentEnrollmentStatus, StudentEnrollmentStatusId> {
 
@@ -38,5 +36,5 @@ public interface StudentEnrollmentStatusRepository extends JpaRepository<Student
             JOIN es.department d
             WHERE es.id.year=:year and es.id.departmentId = :deptId
             """)
-    List<EnrollmentSummaryDto> findByYear(@Param("year") int year, @Param("deptId") int deptId);
+    EnrollmentSummaryDto findByYear(@Param("year") int year, @Param("deptId") int deptId);
 }

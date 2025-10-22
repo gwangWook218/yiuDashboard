@@ -1,14 +1,17 @@
 package com.yiuDashboard.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.yiuDashboard.dto.RecruitmentRateDto;
 import com.yiuDashboard.repository.RecruitmentRateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.time.Year;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,71 +26,147 @@ public class PublicMainService {
     @Value("${univapi.school-id}")
     private String schoolId;
 
-    public Mono<String> getComparisonEnrolledStudent(int year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/StudentService/getComparisonEnrolledStudent")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("schlId", schoolId)
-                        .queryParam("svyYr", year)
-                        .queryParam("pageNo", 1)
-                        .queryParam("numOfRows", 999)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    private int defaultYear() { return Year.now().getValue(); }
+    private String requireSchoolId() { return (schoolId == null || schoolId.isBlank()) ? "0000156" : schoolId; }
+
+    /* ───────── students ───────── */
+    public List<Map<String, Object>> getComparisonEnrolledStudent(int year) throws JsonProcessingException {
+        List<Map<String, Object>> results = new ArrayList<>();
+        String xmlResponse = webClient.get()
+                .uri(u -> u.path("/StudentService/getComparisonEnrolledStudent")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", requireSchoolId())
+                        .queryParam("svyYr", year).build())
+                .retrieve().bodyToMono(String.class).block();
+
+        XmlMapper xml = new XmlMapper();
+        JsonNode items = xml.readTree(xmlResponse).path("body").path("items").path("item");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("year", items.path("svyYr").asInt());
+        map.put("schlKrnNm", items.path("schlKrnNm").asText());
+        map.put("value", items.path("indctVal1").asInt());
+        results.add(map);
+        return results;
+    }
+    public List<Map<String, Object>> getComparisonEnrolledStudent() throws JsonProcessingException {
+        return getComparisonEnrolledStudent(defaultYear());
     }
 
-    public Mono<String> getNoticeGraduateEmploymentRate(int year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/StudentService/getNoticeGraduateEmploymentRate")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("schlId", schoolId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    /* ───────── foreign students ───────── */
+    public List<Map<String, Object>> getComparisonForeignStudentCrntSt(int year) throws JsonProcessingException {
+        List<Map<String, Object>> results = new ArrayList<>();
+        String xmlResponse = webClient.get()
+                .uri(u -> u.path("/StudentService/getComparisonForeignStudentCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", requireSchoolId())
+                        .queryParam("svyYr", year).build())
+                .retrieve().bodyToMono(String.class).block();
+
+        XmlMapper xml = new XmlMapper();
+        JsonNode items = xml.readTree(xmlResponse).path("body").path("items").path("item");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("year", items.path("svyYr").asInt());
+        map.put("schlKrnNm", items.path("schlKrnNm").asText());
+        map.put("value", items.path("indctVal1").asInt());
+        results.add(map);
+        return results;
+    }
+    public List<Map<String, Object>> getComparisonForeignStudentCrntSt() throws JsonProcessingException {
+        return getComparisonForeignStudentCrntSt(defaultYear());
     }
 
-    public Mono<String> getComparisonForeignStudentCrntSt(int year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/StudentService/getComparisonForeignStudentCrntSt")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("schlId", schoolId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    /* ───────── faculty ───────── */
+    public List<Map<String, Object>> getNoticeFullTimeFacultyEnsureRate(int year) throws JsonProcessingException {
+        List<Map<String, Object>> results = new ArrayList<>();
+        String xmlResponse = webClient.get()
+                .uri(u -> u.path("/EducationResearchService/getNoticeFullTimeFacultyEnsureRate")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", requireSchoolId())
+                        .queryParam("svyYr", year).build())
+                .retrieve().bodyToMono(String.class).block();
+
+        XmlMapper xml = new XmlMapper();
+        JsonNode items = xml.readTree(xmlResponse).path("body").path("items").path("item");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("year", items.path("svyYr").asInt());
+        map.put("schlKrnNm", items.path("schlKrnNm").asText());
+        map.put("value", items.path("indctVal3").asInt());
+        results.add(map);
+        return results;
+    }
+    public List<Map<String, Object>> getNoticeFullTimeFacultyEnsureRate() throws JsonProcessingException {
+        return getNoticeFullTimeFacultyEnsureRate(defaultYear());
     }
 
-    public Mono<String> getComparisonFullTimeFacultyEnsureCrntSt(int year, int indctId) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("indctId", indctId)
-                        .queryParam("schlId", schoolId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    /* ───────── scholarship (비교) ───────── */
+    public List<Map<String, Object>> getComparisonScholarshipBenefitCrntSt(int year) throws JsonProcessingException {
+        List<Map<String, Object>> results = new ArrayList<>();
+        String xmlResponse = webClient.get()
+                .uri(u -> u.path("/FinancesService/getComparisonScholarshipBenefitCrntSt")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", requireSchoolId())
+                        .queryParam("svyYr", year).build())
+                .retrieve().bodyToMono(String.class).block();
+
+        XmlMapper xml = new XmlMapper();
+        JsonNode items = xml.readTree(xmlResponse).path("body").path("items").path("item");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("year", items.path("svyYr").asInt());
+        map.put("schlKrnNm", items.path("schlKrnNm").asText());
+        map.put("value", items.path("indctVal1").asDouble());
+        results.add(map);
+        return results;
+    }
+    public List<Map<String, Object>> getComparisonScholarshipBenefitCrntSt() throws JsonProcessingException {
+        return getComparisonScholarshipBenefitCrntSt(defaultYear());
     }
 
-    public Mono<String> getComparisonScholarshipBenefitCrntSt(int year) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/FinancesService/getComparisonScholarshipBenefitCrntSt")
-                        .queryParam("serviceKey", serviceKey)
-                        .queryParam("schlId", schoolId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    /* ───────── graduate employment (공지) ───────── */
+    public List<Map<String, Object>> getNoticeGraduateEmploymentRate(int year) throws JsonProcessingException {
+        List<Map<String, Object>> results = new ArrayList<>();
+        String xmlResponse = webClient.get()
+                .uri(u -> u.path("/StudentService/getNoticeGraduateEmploymentRate")
+                        .queryParam("ServiceKey", serviceKey)
+                        .queryParam("schlId", requireSchoolId())
+                        .queryParam("svyYr", year).build())
+                .retrieve().bodyToMono(String.class).block();
+
+        XmlMapper xml = new XmlMapper();
+        JsonNode items = xml.readTree(xmlResponse).path("body").path("items").path("item");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("year", items.path("svyYr").asInt());
+        map.put("schlKrnNm", items.path("schlKrnNm").asText());
+        map.put("value", items.path("indctVal4").asDouble());
+        results.add(map);
+        return results;
+    }
+    public List<Map<String, Object>> getNoticeGraduateEmploymentRate() throws JsonProcessingException {
+        return getNoticeGraduateEmploymentRate(defaultYear());
     }
 
-//    수시/정시 비율
+    /* ───────── staff (임직원 수) ───────── */
+    public List<Map<String, Object>> getStaffCount(int year) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("year", year);
+        map.put("schlKrnNm", "용인대학교");
+        map.put("staff_count", 126); // ✅ 임직원 수를 126으로 고정
+        return List.of(map);
+    }
+
+    public List<Map<String, Object>> getStaffCount() {
+        return getStaffCount(defaultYear());
+    }
+
+    /* ───────── recruitment rate (수시/정시 비율) ───────── */
     public List<RecruitmentRateDto> findRecruitmentRateByYear(int year) {
         return recruitmentRateRepository.findRecruitmentRateByYear(year);
+    }
+    public List<RecruitmentRateDto> findRecruitmentRateByYear() {
+        return findRecruitmentRateByYear(defaultYear());
     }
 }

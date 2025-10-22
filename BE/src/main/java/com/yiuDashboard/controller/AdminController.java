@@ -18,11 +18,11 @@ import java.util.Map;
 public class AdminController {
 
     private final AdminService adminService;
-    private final EnrollmentService enrollmentService;
     private final EmploymentRateService employmentRateService;
     private final DropoutRateService dropoutRateService;
+    private final FactorAnalysisService factorAnalysisService;
 
-//    전임교원 확보 현황
+    //    전임교원 확보 현황
 //    대학비교통계
     @GetMapping("/ensure/compare")
     public ResponseEntity<List<Map<String, Object>>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
@@ -37,8 +37,8 @@ public class AdminController {
 
 //    우리대학경쟁력
     @GetMapping("/ensure/notice")
-    public String getNoticeFullTimeFacultyEnsureRate(@RequestParam int year, @RequestParam String schlId) {
-        return adminService.getNoticeFullTimeFacultyEnsureRate(year, schlId).block();
+    public List<Map<String, Object>> getNoticeFullTimeFacultyEnsureRate() throws JsonProcessingException {
+        return adminService.getNoticeFullTimeFacultyEnsureRate();
     }
 
 //    전임교원 1인당 학생 수
@@ -115,10 +115,10 @@ public class AdminController {
         return dropoutRateService.getDropoutDetail(year, deptId);
     }
 
-//    학과별 재학생 수
-    @GetMapping("/enrollment/summary")
-    public List<EnrollmentSummaryDto> findByYear(@RequestParam int year, @RequestParam int deptId) {
-        return enrollmentService.findByYear(year, deptId);
+    //    요인 분석
+    @GetMapping("/dropout/factor")
+    public List<Map<String, Object>> findByYearAndType(@RequestParam int year, @RequestParam String type) {
+        return factorAnalysisService.findByYearAndType(year, type);
     }
 
 //    1인당 장학금 지급액

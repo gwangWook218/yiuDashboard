@@ -29,38 +29,32 @@ public class AdminService {
     public List<Map<String, Object>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
 
         List<String> schlIds = List.of("0000156", "0000109", "0000051");
-        List<Integer> indctIds = List.of(66, 67);
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (int year : years) {
             for (String schlId : schlIds) {
-                for (int indctId : indctIds) {
-                    String xmlResponse = webClient.get()
-                            .uri(uriBuilder -> uriBuilder
-                                    .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
-                                    .queryParam("ServiceKey", serviceKey)
-                                    .queryParam("indctId", indctId)
-                                    .queryParam("schlId", schlId)
-                                    .queryParam("svyYr", year)
-                                    .build())
-                            .retrieve()
-                            .bodyToMono(String.class)
-                            .block();
+                String xmlResponse = webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
+                                .queryParam("ServiceKey", serviceKey)
+                                .queryParam("indctId", 66)
+                                .queryParam("schlId", schlId)
+                                .queryParam("svyYr", year)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
 
-                    XmlMapper xmlMapper = new XmlMapper();
-                    JsonNode root = xmlMapper.readTree(xmlResponse);
-                    JsonNode items = root.path("body").path("items").path("item");
+                XmlMapper xmlMapper = new XmlMapper();
+                JsonNode root = xmlMapper.readTree(xmlResponse);
+                JsonNode items = root.path("body").path("items").path("item");
 
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("indctId", items.path("indctId").asInt());
-                    map.put("year", items.path("svyYr").asInt());
-                    map.put("schlKrnNm", items.path("schlKrnNm").asText());
-                    map.put("value", items.path("indctVal1").asDouble());
-                    results.add(map);
-
-                    Thread.sleep(500);
-                }
+                Map<String, Object> map = new HashMap<>();
+                map.put("year", items.path("svyYr").asInt());
+                map.put("schlKrnNm", items.path("schlKrnNm").asText());
+                map.put("value", items.path("indctVal1").asDouble());
+                results.add(map);
             }
         }
         return results;
@@ -108,16 +102,37 @@ public class AdminService {
         return results;
     }
 
-    public Mono<String> getNoticeFullTimeFacultyEnsureRate(int year, String schlId) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/EducationResearchService/getNoticeFullTimeFacultyEnsureRate")
-                        .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlId", schlId)
-                        .queryParam("svyYr", year)
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class);
+    public List<Map<String, Object>> getNoticeFullTimeFacultyEnsureRate() throws JsonProcessingException {
+
+        List<Integer> years = List.of(2022, 2023, 2024);
+        List<Map<String, Object>> results = new ArrayList<>();
+
+        for (int year : years) {
+            String xmlResponse = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/EducationResearchService/getNoticeFullTimeFacultyEnsureRate")
+                            .queryParam("ServiceKey", serviceKey)
+                            .queryParam("schlId", "0000156")
+                            .queryParam("svyYr", year)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            XmlMapper xmlMapper = new XmlMapper();
+            JsonNode root = xmlMapper.readTree(xmlResponse);
+            JsonNode items = root.path("body").path("items").path("item");
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("year", items.path("svyYr").asInt());
+            map.put("schlKrnNm", items.path("schlKrnNm").asText());
+            map.put("학생정원", items.path("indctVal1").asInt());
+            map.put("학생정원 기준 교원 법정정원", items.path("indctVal2").asInt());
+            map.put("학생정원 기준 전임교원", items.path("indctVal3").asInt());
+            map.put("전임교원 확보율", items.path("indctVal4").asDouble());
+            results.add(map);
+        }
+        return results;
     }
 
     public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
