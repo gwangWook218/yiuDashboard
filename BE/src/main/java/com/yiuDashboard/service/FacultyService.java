@@ -168,6 +168,7 @@ public class FacultyService {
 
             results.add(mapOf("year", 2023, "region", region, "value", asDouble(it, "indctFirstVal", 0d)));
             results.add(mapOf("year", 2024, "region", region, "value", asDouble(it, "indctSecondVal", 0d)));
+            results.add(mapOf("year", 2025, "region", region, "value", asDouble(it, "indctThirdVal", 0d)));
         }
         return results;
     }
@@ -220,6 +221,7 @@ public class FacultyService {
 
             results.add(mapOf("year", 2023, "region", region, "value", asDouble(it, "fieldVal4", 0d)));
             results.add(mapOf("year", 2024, "region", region, "value", asDouble(it, "fieldVal5", 0d)));
+            results.add(mapOf("year", 2025, "region", region, "value", asDouble(it, "fieldVal6", 0d)));
         }
         return results;
     }
@@ -281,9 +283,11 @@ public class FacultyService {
 
             double v23 = asDouble(it, "indctFirstVal", 0d);
             double v24 = asDouble(it, "indctSecondVal", 0d);
+            double v25 = asDouble(it, "indctThirdVal", 0d);
 
             results.add(mapOf("year", 2023, "region", region, "value", v23));
             results.add(mapOf("year", 2024, "region", region, "value", v24, "increase", v24 - v23));
+            results.add(mapOf("year", 2025, "region", region, "value", v25, "increase", v25 - v24));
         }
         return results;
     }
@@ -310,13 +314,16 @@ public class FacultyService {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("region", region);
                 row.put("year", year);
-                row.put("inside", Math.round(inVal));
-                row.put("outside", Math.round(outVal));
-                row.put("gap", Math.round(outVal - inVal));
+                row.put("inside", inVal);
+                row.put("outside", outVal);
+                row.put("gap", outVal - inVal);
 
                 if (year == 2024) {
-                    row.put("increase_inside", Math.round(inVal - inYears.getOrDefault(2023, 0d)));
-                    row.put("increase_outside", Math.round(outVal - outYears.getOrDefault(2023, 0d)));
+                    row.put("increase_inside", inVal - inYears.getOrDefault(2023, 0d));
+                    row.put("increase_outside", outVal - outYears.getOrDefault(2023, 0d));
+                } else if (year == 2025) {
+                    row.put("increase_inside", inVal - inYears.getOrDefault(2024, 0d));
+                    row.put("increase_outside", outVal - outYears.getOrDefault(2024, 0d));
                 }
                 results.add(row);
             }

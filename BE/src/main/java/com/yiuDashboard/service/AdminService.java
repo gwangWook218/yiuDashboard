@@ -28,18 +28,16 @@ public class AdminService {
 
     public List<Map<String, Object>> getComparisonFullTimeFacultyEnsureCrntSt() throws JsonProcessingException, InterruptedException {
 
-        List<String> schlIds = List.of("0000156", "0000109", "0000051");
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
 
         for (int year : years) {
-            for (String schlId : schlIds) {
                 String xmlResponse = webClient.get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/EducationResearchService/getComparisonFullTimeFacultyEnsureCrntSt")
                                 .queryParam("ServiceKey", serviceKey)
                                 .queryParam("indctId", 66)
-                                .queryParam("schlId", schlId)
+                                .queryParam("schlId", "0000156")
                                 .queryParam("svyYr", year)
                                 .build())
                         .retrieve()
@@ -55,7 +53,6 @@ public class AdminService {
                 map.put("schlKrnNm", items.path("schlKrnNm").asText());
                 map.put("value", items.path("indctVal1").asDouble());
                 results.add(map);
-            }
         }
         return results;
     }
@@ -96,6 +93,12 @@ public class AdminService {
                 map2024.put("value", item.path("fieldVal5").asDouble());
                 map2024.put("region", region);
                 results.add(map2024);
+
+                Map<String, Object> map2025 = new HashMap<>();
+                map2025.put("year", 2025);
+                map2025.put("value", item.path("fieldVal6").asDouble());
+                map2025.put("region", region);
+                results.add(map2025);
             }
         }
 
@@ -137,33 +140,30 @@ public class AdminService {
 
     public List<Map<String, Object>> getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent() throws JsonProcessingException {
 
-        List<String> schlIds = List.of("0000156", "0000109", "0000051");
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
 
-        for (String schlId : schlIds) {
-            for (int year : years) {
-                String xmlResponse = webClient.get()
-                        .uri(uriBuilder -> uriBuilder
-                                .path("/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent")
-                                .queryParam("ServiceKey", serviceKey)
-                                .queryParam("schlId", schlId)
-                                .queryParam("svyYr", year)
-                                .build())
-                        .retrieve()
-                        .bodyToMono(String.class)
-                        .block();
+        for (int year : years) {
+            String xmlResponse = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/EducationResearchService/getComparisonFullTimeFacultyForPersonStudentNumberEnrolledStudent")
+                            .queryParam("ServiceKey", serviceKey)
+                            .queryParam("schlId", "0000156")
+                            .queryParam("svyYr", year)
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-                XmlMapper xmlMapper = new XmlMapper();
-                JsonNode root = xmlMapper.readTree(xmlResponse);
-                JsonNode items = root.path("body").path("items").path("item");
+            XmlMapper xmlMapper = new XmlMapper();
+            JsonNode root = xmlMapper.readTree(xmlResponse);
+            JsonNode items = root.path("body").path("items").path("item");
 
-                Map<String, Object> map = new HashMap<>();
-                map.put("year", items.path("svyYr").asInt());
-                map.put("schlKrnNm", items.path("schlKrnNm").asText());
-                map.put("value", items.path("indctVal1").asDouble());
-                results.add(map);
-            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("year", items.path("svyYr").asInt());
+            map.put("schlKrnNm", items.path("schlKrnNm").asText());
+            map.put("value", items.path("indctVal1").asDouble());
+            results.add(map);
         }
 
         return results;
@@ -205,6 +205,12 @@ public class AdminService {
                 map2024.put("value", item.path("indctSecondVal").asDouble());
                 map2024.put("region", region);
                 results.add(map2024);
+
+                Map<String, Object> map2025 = new HashMap<>();
+                map2025.put("year", 2025);
+                map2025.put("value", item.path("indctThirdVal").asDouble());
+                map2025.put("region", region);
+                results.add(map2025);
             }
         }
 
@@ -281,6 +287,12 @@ public class AdminService {
                 map2024.put("value", item.path("fieldVal5").asDouble());
                 map2024.put("region", region);
                 results.add(map2024);
+
+                Map<String, Object> map2025 = new HashMap<>();
+                map2025.put("year", 2025);
+                map2025.put("value", item.path("fieldVal6").asDouble());
+                map2025.put("region", region);
+                results.add(map2025);
             }
         }
 
@@ -491,6 +503,12 @@ public class AdminService {
                 map2024.put("value", item.path("fieldVal5").asDouble());
                 map2024.put("region", region);
                 results.add(map2024);
+
+                Map<String, Object> map2025 = new HashMap<>();
+                map2025.put("year", 2025);
+                map2025.put("value", item.path("fieldVal6").asDouble());
+                map2025.put("region", region);
+                results.add(map2025);
             }
         }
 
@@ -569,15 +587,21 @@ public class AdminService {
             if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
                 Map<String, Object> map2023 = new HashMap<>();
                 map2023.put("year", 2023);
-                map2023.put("value", Math.round(item.path("fieldVal4").asDouble()));
+                map2023.put("value", item.path("fieldVal4").asDouble());
                 map2023.put("region", region);
                 results.add(map2023);
 
                 Map<String, Object> map2024 = new HashMap<>();
                 map2024.put("year", 2024);
-                map2024.put("value", Math.round(item.path("fieldVal5").asDouble()));
+                map2024.put("value", item.path("fieldVal5").asDouble());
                 map2024.put("region", region);
                 results.add(map2024);
+
+                Map<String, Object> map2025 = new HashMap<>();
+                map2025.put("year", 2025);
+                map2025.put("value", item.path("fieldVal6").asDouble());
+                map2025.put("region", region);
+                results.add(map2025);
             }
         }
 
@@ -644,15 +668,21 @@ public class AdminService {
             if (region.equals("전체") || region.equals("수도권") || region.equals("비수도권")) {
                 Map<String, Object> map2023 = new HashMap<>();
                 map2023.put("year", 2023);
-                map2023.put("value", Math.round(item.path("fieldVal4").asDouble()));
+                map2023.put("value", item.path("fieldVal4").asInt());
                 map2023.put("region", region);
                 results.add(map2023);
 
                 Map<String, Object> map2024 = new HashMap<>();
                 map2024.put("year", 2024);
-                map2024.put("value", Math.round(item.path("fieldVal5").asDouble()));
+                map2024.put("value", item.path("fieldVal5").asInt());
                 map2024.put("region", region);
                 results.add(map2024);
+
+                Map<String, Object> map2025 = new HashMap<>();
+                map2025.put("year", 2025);
+                map2025.put("value", item.path("fieldVal6").asInt());
+                map2025.put("region", region);
+                results.add(map2025);
             }
         }
 
