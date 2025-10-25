@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class EnrollmentSummaryDto {
     private Integer year;
     private String department;
+    private String isDaytime;
     private Number totalStudents;
     private Number oneYearLater;
     private Number avgStudents;

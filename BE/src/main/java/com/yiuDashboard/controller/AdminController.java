@@ -156,7 +156,7 @@ public class AdminController {
 
 //    졸업생 취업률
     @GetMapping("/employment-rates")
-    public GraduateStatsDTO findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
-        return employmentRateService.getGraduateStats(year, deptId);
+    public List<GraduateStatsDTO> findEmployRateByYear(@RequestParam int year) {
+        return employmentRateService.getGraduateStats(year);
     }
 }

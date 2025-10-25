@@ -2,7 +2,7 @@ package com.yiuDashboard.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiuDashboard.dto.GraduateAdmissionDto;
-import com.yiuDashboard.dto.gradEmployment.EmployAdmissionDto;
+import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
 import com.yiuDashboard.dto.grade.GradeRangeDto;
 import com.yiuDashboard.dto.grade.GradeSummaryDto;
 import com.yiuDashboard.service.*;
@@ -84,13 +84,13 @@ public class FacultyController {
 
 //    졸업생 진학/취업 현황
     @GetMapping("/department/graduates/employment-rates")
-    public EmployAdmissionDto findEmployRateByYear(@RequestParam int year, @RequestParam int deptId) {
-        return employmentRateService.getEmployAdmission(year, deptId);
+    public List<GraduateStatsDTO> findEmployAdmissionByYear(@RequestParam int year) {
+        return employmentRateService.getGraduateStats(year);
     }
 
     @GetMapping("/department/graduates/admission-detail")
-    public GraduateAdmissionDto findAdmission(@RequestParam int year, @RequestParam int deptId) {
-        return graduateAdmissionService.getAdmission(year, deptId);
+    public List<GraduateAdmissionDto> findAdmission(@RequestParam int year) {
+        return graduateAdmissionService.getAdmission(year);
     }
 
     // 학년, 학과별 총 학생수 + 평균 GPA

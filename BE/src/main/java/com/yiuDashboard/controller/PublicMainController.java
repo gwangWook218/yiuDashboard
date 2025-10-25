@@ -27,8 +27,8 @@ public class PublicMainController {
 
     //    재학생 수
     @GetMapping("/department/students/count")
-    public EnrollmentSummaryDto findByYear(@RequestParam int year, @RequestParam int deptId) {
-        return enrollmentService.findByYear(year, deptId);
+    public List<EnrollmentSummaryDto> findByYear(@RequestParam int year) {
+        return enrollmentService.findByYear(year);
     }
 
     @GetMapping("/foreign")

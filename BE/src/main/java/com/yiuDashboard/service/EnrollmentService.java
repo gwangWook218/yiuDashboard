@@ -5,13 +5,15 @@ import com.yiuDashboard.repository.StudentEnrollmentStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EnrollmentService {
 
     private final StudentEnrollmentStatusRepository repository;
 
-    public EnrollmentSummaryDto findByYear(int year, int deptId) {
-        return repository.findByYear(year, deptId);
+    public List<EnrollmentSummaryDto> findByYear(int year) {
+        return repository.findByYear(year);
     }
 }
