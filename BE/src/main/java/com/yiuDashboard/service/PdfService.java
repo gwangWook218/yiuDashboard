@@ -1,5 +1,6 @@
 package com.yiuDashboard.service;
 
+import com.yiuDashboard.entity.User;
 import com.yiuDashboard.entity.personalGrades.CreditProgress;
 import com.yiuDashboard.entity.personalGrades.SemesterRecord;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -35,7 +36,7 @@ public class PdfService {
         }
     }
 
-    public List<SemesterRecord> extractSemesterRecords(MultipartFile file, Long userId) throws IOException {
+    public List<SemesterRecord> extractSemesterRecords(MultipartFile file, User user) throws IOException {
         String text = extractNormalizedText(file);
         if (text.isBlank()) return Collections.emptyList();
 
@@ -51,11 +52,11 @@ public class PdfService {
         List<SemesterRecord> out = new ArrayList<>();
         Matcher m = ko.matcher(text);
         while (m.find()) {
-            int year = Integer.parseInt(m.group(1));
-            int half = Integer.parseInt(m.group(2));
+            String year = m.group(1);
+            String semester = m.group(2);
             int credits = Integer.parseInt(m.group(3));
             double gpa = Double.parseDouble(m.group(4));
-            out.add(new SemesterRecord(year + "-" + half, credits, gpa, userId));
+            out.add(new SemesterRecord(year + "-" + semester, credits, gpa, user));
         }
         if (out.isEmpty()) {
             Matcher m2 = en.matcher(text);
@@ -64,7 +65,7 @@ public class PdfService {
                 int half = Integer.parseInt(m2.group(2));
                 int credits = Integer.parseInt(m2.group(3));
                 double gpa = Double.parseDouble(m2.group(4));
-                out.add(new SemesterRecord(year + "-" + half, credits, gpa, userId));
+                out.add(new SemesterRecord(year + "-" + half, credits, gpa, user));
             }
         }
 
@@ -75,16 +76,25 @@ public class PdfService {
         return out;
     }
 
-    public List<CreditProgress> extractCreditProgress(MultipartFile file, Long userId) throws IOException {
+    public List<CreditProgress> extractCreditProgress(MultipartFile file, User user) throws IOException {
         String text = extractNormalizedText(file);
+        System.out.println(text);
 
         Map<String, Integer> requiredMap = new HashMap<>();
         Map<String, Integer> earnedMap = new HashMap<>();
 
-        Matcher m1 = Pattern.compile("(?<!복수,부,연계전공 )(교양필수|기초전공)\\s+(\\d+)\\s+(\\d+)").matcher(text);
+        Matcher m1 = Pattern.compile("(?m)\\b(교양필수|기초전공)\\s+(\\d+)\\s+(\\d+)").matcher(text);
         while (m1.find()) {
-            requiredMap.put(m1.group(1), Integer.parseInt(m1.group(2)));
-            earnedMap.put(m1.group(1), Integer.parseInt(m1.group(3)));
+            String key = m1.group(1);
+            int required = Integer.parseInt(m1.group(2));
+            int earned = Integer.parseInt(m1.group(3));
+
+            int start = Math.max(0, m1.start() - 50);
+            String before = text.substring(start, m1.start());
+            if (before.contains("복수.부.연계전공") && key.equals("기초전공")) continue;
+
+            requiredMap.put(key, required);
+            earnedMap.put(key, earned);
         }
 
         Matcher m2 = Pattern.compile("교양선택\\s*(\\d+)(?:\\s|$)").matcher(text);
@@ -111,7 +121,7 @@ public class PdfService {
 
         List<CreditProgress> list = new ArrayList<>();
         for (String k : requiredMap.keySet()) {
-            list.add(new CreditProgress(k, requiredMap.getOrDefault(k, 0), earnedMap.getOrDefault(k, 0), userId));
+            list.add(new CreditProgress(k, requiredMap.getOrDefault(k, 0), earnedMap.getOrDefault(k, 0), user));
         }
         return list;
     }

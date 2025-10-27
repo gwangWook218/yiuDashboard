@@ -34,7 +34,7 @@ public class CreditProgress {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public CreditProgress(String category, int required, int earned, Long userId) {
+    public CreditProgress(String category, int required, int earned, User user) {
         this.category = category;
         this.required = required;
         this.earned = earned;
@@ -48,8 +48,6 @@ public class CreditProgress {
             this.rate = 100.0; // 기준이 없는 경우(일반선택 등)는 자동 100%
         }
 
-        User u = new User();
-        u.setId(userId);
-        this.user = u;
+        this.user = user;
     }
 }

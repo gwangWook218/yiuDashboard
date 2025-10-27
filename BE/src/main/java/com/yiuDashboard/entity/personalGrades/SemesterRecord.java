@@ -31,13 +31,10 @@ public class SemesterRecord {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public SemesterRecord(String semester, int credits, double gpa, Long userId) {
+    public SemesterRecord(String semester, int credits, double gpa, User user) {
         this.semester = semester;
         this.credits = credits;
         this.gpa = gpa;
-
-        User user = new User();
-        user.setId(userId);
         this.user = user;
     }
 }
