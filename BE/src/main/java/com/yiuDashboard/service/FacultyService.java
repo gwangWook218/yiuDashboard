@@ -241,24 +241,27 @@ public class FacultyService {
             default -> throw new IllegalArgumentException("Invalid scope: " + scope);
         };
 
+        List<String> schlIds = List.of("0000156", "0000109", "0000051");
         List<Integer> years = List.of(2022, 2023, 2024);
         List<Map<String, Object>> results = new ArrayList<>();
 
-        for (int year : years) {
-            String xml = fetchXml(
-                    path,
-                    Map.of("schlId", schlId, "svyYr", year)
-            );
-            List<JsonNode> its = items(xml);
-            if (!its.isEmpty()) {
-                JsonNode it = its.get(0);
-                results.add(mapOf(
-                        "year", asInt(it, "svyYr", year),
-                        "schlKrnNm", asText(it, "schlKrnNm"),
-                        "value", asDouble(it, "indctVal1", 0d)
-                ));
+        for (String schlId : schlIds) {
+            for (int year : years) {
+                String xml = fetchXml(
+                        path,
+                        Map.of("schlId", schlId, "svyYr", year)
+                );
+                List<JsonNode> its = items(xml);
+                if (!its.isEmpty()) {
+                    JsonNode it = its.get(0);
+                    results.add(mapOf(
+                            "year", asInt(it, "svyYr", year),
+                            "schlKrnNm", asText(it, "schlKrnNm"),
+                            "value", asDouble(it, "indctVal1", 0d)
+                    ));
+                }
+                cooldown();
             }
-            cooldown();
         }
         return results;
     }

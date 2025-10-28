@@ -26,9 +26,7 @@ public class StudentAdditionalInfo {
     private CertificateStatus certificateStatus; // 자격증 취득 여부
 
     public enum GraduationThesisStatus {
-        @JsonProperty("제출 필요")
         제출필요,
-        @JsonProperty("제출 완료")
         제출함
     }
 
