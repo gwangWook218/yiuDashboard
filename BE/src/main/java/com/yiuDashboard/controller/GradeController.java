@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/grades")
@@ -60,12 +61,8 @@ public class GradeController {
             }
 
             if (save) {
-                try {
-                    recordRepository.saveAll(records); // 외래키 없으면 여기서 실패
-                } catch (DataIntegrityViolationException fk) {
-                    // 데모 모드 우선: 저장은 건너뛰고 파싱 결과만 반환
-                    return ResponseEntity.ok(records);
-                }
+                recordRepository.deleteAllByUser(user);
+                recordRepository.saveAll(records);
             }
             return ResponseEntity.ok(records);
         } catch (IOException e) {
@@ -105,11 +102,8 @@ public class GradeController {
             }
 
             if (save) {
-                try {
-                    progressRepository.saveAll(progresses);
-                } catch (DataIntegrityViolationException fk) {
-                    return ResponseEntity.ok(progresses);
-                }
+                progressRepository.deleteAllByUser(user);
+                progressRepository.saveAll(progresses);
             }
             return ResponseEntity.ok(progresses);
         } catch (IOException e) {
@@ -136,10 +130,26 @@ public class GradeController {
             throw new IllegalArgumentException("로그인 유저가 DB에 존재하지 않습니다.");
         }
 
-        // 엔티티에 로그인 유저 자동 세팅
-        info.setUser(user);
+        Optional<StudentAdditionalInfo> existingInfoOpt = studentAdditionalInfoRepository.findByUser(user);
 
-        return studentAdditionalInfoRepository.save(info);
+        StudentAdditionalInfo savedInfo;
+        if (existingInfoOpt.isPresent()) {
+            // 기존 정보가 있다면 업데이트
+            StudentAdditionalInfo existingInfo = existingInfoOpt.get();
+
+            existingInfo.setTransferCredits(info.getTransferCredits());
+            existingInfo.setThesisStatus(info.getThesisStatus());
+            existingInfo.setToeicScore(info.getToeicScore());
+            existingInfo.setCertificateStatus(info.getCertificateStatus());
+
+            savedInfo = studentAdditionalInfoRepository.save(existingInfo);
+        } else {
+            // 기존 정보가 없다면 새로 생성
+            info.setUser(user);
+            savedInfo = studentAdditionalInfoRepository.save(info);
+        }
+
+        return savedInfo;
     }
 
     @GetMapping("/my-info-add")

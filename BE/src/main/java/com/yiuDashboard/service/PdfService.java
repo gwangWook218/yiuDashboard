@@ -78,7 +78,6 @@ public class PdfService {
 
     public List<CreditProgress> extractCreditProgress(MultipartFile file, User user) throws IOException {
         String text = extractNormalizedText(file);
-        System.out.println(text);
 
         Map<String, Integer> requiredMap = new HashMap<>();
         Map<String, Integer> earnedMap = new HashMap<>();

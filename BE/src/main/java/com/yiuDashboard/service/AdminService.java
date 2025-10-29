@@ -62,7 +62,7 @@ public class AdminService {
                 .uri(uriBuilder -> uriBuilder
                         .path("/EducationResearchService/getRegionalFullTimeFacultyEnsureCrntSt")
                         .queryParam("ServiceKey", serviceKey)
-                        .queryParam("schlDivCd", schlDivCd)
+                        .queryParam("schlDivCd", "01")
                         .build())
                 .retrieve()
                 .bodyToMono(String.class)

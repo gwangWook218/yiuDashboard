@@ -19,8 +19,6 @@ public class PdfReaderExample {
 
         PDFTextStripper stripper = new PDFTextStripper();
         String pdfText = stripper.getText(document);
-        pdfText = pdfText.replace("\u00A0", " "); // non-breaking space
-        pdfText = pdfText.replaceAll("\\r?\\n", " "); // 줄바꿈을 공백으로
         System.out.println(pdfText);
         document.close();
 
