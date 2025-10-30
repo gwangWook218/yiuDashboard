@@ -2,7 +2,6 @@ package com.yiuDashboard.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yiuDashboard.dto.DropoutRateDTO;
-import com.yiuDashboard.dto.EnrollmentSummaryDto;
 import com.yiuDashboard.dto.gradEmployment.GraduateStatsDTO;
 import com.yiuDashboard.service.*;
 import lombok.RequiredArgsConstructor;

@@ -10,7 +10,6 @@ import com.yiuDashboard.repository.StudentAdditionalInfoRepository;
 import com.yiuDashboard.repository.UserRepository;
 import com.yiuDashboard.service.PdfService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
