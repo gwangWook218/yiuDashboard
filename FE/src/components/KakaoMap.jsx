@@ -4,7 +4,7 @@ const loadKakao = (appKey) =>
   new Promise((resolve, reject) => {
     if (window.kakao && window.kakao.maps) return resolve(window.kakao);
     const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`;
     script.async = true;
     script.onload = () => {
       window.kakao.maps.load(() => resolve(window.kakao));
