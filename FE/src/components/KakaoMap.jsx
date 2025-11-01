@@ -1,15 +1,23 @@
 import React, { useEffect, useRef } from "react";
 
+// Kakao SDK 로드 함수
 const loadKakao = (appKey) =>
   new Promise((resolve, reject) => {
     if (window.kakao && window.kakao.maps) return resolve(window.kakao);
+
     const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=true`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false`;
     script.async = true;
+
     script.onload = () => {
-      window.kakao.maps.load(() => resolve(window.kakao));
+      if (!window.kakao) return reject(new Error("Kakao SDK not loaded"));
+      window.kakao.maps.load(() => {
+        if (!window.kakao.maps) return reject(new Error("Kakao Maps not available"));
+        resolve(window.kakao);
+      });
     };
-    script.onerror = reject;
+
+    script.onerror = () => reject(new Error("Kakao SDK load failed"));
     document.head.appendChild(script);
   });
 
@@ -26,26 +34,40 @@ export default function KakaoMap({
   useEffect(() => {
     let map;
     let markers = [];
-    (async () => {
-      if (!appKey) return;
-      const kakao = await loadKakao(appKey);
-      const opts = {
-        center: new kakao.maps.LatLng(center.lat, center.lng),
-        level,
-      };
-      map = new kakao.maps.Map(ref.current, opts);
 
-      // 마커 생성
-      markers = facilities.map((f) => {
-        const marker = new kakao.maps.Marker({
-          position: new kakao.maps.LatLng(f.lat, f.lng),
-          map,
+    const initMap = async () => {
+      if (!appKey) return console.warn("VITE_KAKAO_APP_KEY가 설정되지 않았습니다.");
+
+      try {
+        const kakao = await loadKakao(appKey);
+
+        // 지도 옵션
+        const options = {
+          center: new kakao.maps.LatLng(center.lat, center.lng),
+          level,
+        };
+
+        // 지도 생성
+        map = new kakao.maps.Map(ref.current, options);
+
+        // 마커 생성
+        markers = facilities.map((f) => {
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(f.lat, f.lng),
+            map,
+          });
+          kakao.maps.event.addListener(marker, "click", () => onSelect(f));
+          return marker;
         });
-        kakao.maps.event.addListener(marker, "click", () => onSelect(f));
-        return marker;
-      });
-    })();
+      } catch (err) {
+        console.error("Kakao Map Load Error:", err);
+      }
+    };
+
+    initMap();
+
     return () => {
+      // 컴포넌트 언마운트 시 마커 제거
       markers.forEach((m) => m.setMap(null));
     };
   }, [center, level, facilities, appKey, onSelect]);
