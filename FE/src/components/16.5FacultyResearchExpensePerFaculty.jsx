@@ -29,7 +29,7 @@ const UNIVERSITY_SOFT_COLORS = {
 
 
 const YEARS = ['2022', '2023', '2024'];
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080';
 const API_ENDPOINTS = {
     uni: '/api/faculty/research/funding-per-faculty/compare',
 };

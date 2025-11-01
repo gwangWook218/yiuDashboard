@@ -4,11 +4,12 @@ import react from "@vitejs/plugin-react";
 // ★ 포인트: proxy.configure 로 Origin 헤더 제거
 export default defineConfig({
   plugins: [react()],
+  base: "./",
   server: {
     port: 5184,
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080",
         changeOrigin: true,
         secure: false,
         ws: true,

@@ -29,9 +29,9 @@ const YIU_COLOR = BRAND;
 const YEARS = ["2022", "2023", "2024"]; // 연도 배열
 
 // API 엔드포인트 정의 (로컬호스트 URL은 예시입니다)
-const NOTICE_URL = 'http://localhost:8080/api/faculty/fulltime/ensure/notice';   // 고시 상세
-const COMPARE_URL = 'http://localhost:8080/api/faculty/fulltime/ensure/compare'; // 대학 비교
-const REGION_URL = 'http://localhost:8080/api/faculty/fulltime/ensure/region';   // 지역별 비교
+const NOTICE_URL = 'http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/faculty/fulltime/ensure/notice';   // 고시 상세
+const COMPARE_URL = 'http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/faculty/fulltime/ensure/compare'; // 대학 비교
+const REGION_URL = 'http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/faculty/fulltime/ensure/region';   // 지역별 비교
 
 // --- 유틸리티 함수 ---
 

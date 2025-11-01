@@ -429,7 +429,7 @@ export default function ScholarshipKPI() {
     const [educostRegionData, setEducostRegionData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const BASE_URL = 'http://localhost:8080';
+    const BASE_URL = 'http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080';
 
     // 🚩 API 호출 실패 시에도 에러를 던지지 않고 빈 데이터로 처리하는 유틸리티를 useEffect 내부에 정의
     const safeFetch = async (endpoint, transformer) => {

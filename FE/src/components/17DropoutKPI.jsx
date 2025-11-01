@@ -130,7 +130,7 @@ export default function DropoutKPI() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/admin/dropout/ai?year=${year}`)
+      .get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/ai?year=${year}`)
       .then((res) => {
         // "소계"는 제외
         const filtered = res.data.filter((d) => d.departments !== "소계");
@@ -141,7 +141,7 @@ export default function DropoutKPI() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/admin/dropout/detail?deptId=${deptId}&year=${year}`)
+      .get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/detail?deptId=${deptId}&year=${year}`)
       .then((res) => setDeptDetail(res.data))
       .catch((err) => console.error(err));
   }, [deptId, year]);
@@ -150,8 +150,8 @@ export default function DropoutKPI() {
       const loadFactor = async () => {
         try {
           const [res2023, res2024] = await Promise.all([
-            axios.get(`http://localhost:8080/api/admin/dropout/factor?year=2023&type=${factorTab}`),
-            axios.get(`http://localhost:8080/api/admin/dropout/factor?year=2024&type=${factorTab}`),
+            axios.get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/factor?year=2023&type=${factorTab}`),
+            axios.get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/factor?year=2024&type=${factorTab}`),
           ]);
           // API → 그래프용 형식
           const mapData = (arr) =>

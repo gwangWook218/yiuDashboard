@@ -31,8 +31,8 @@ export default function FacultyStudentRatio() {
     const fetchData = async () => {
       try {
         const [compareRes, regionRes] = await Promise.all([
-          fetch('http://localhost:8080/api/admin/lecture-ratio/compare'),
-          fetch('http://localhost:8080/api/admin/lecture-ratio/region')
+          fetch('http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/lecture-ratio/compare'),
+          fetch('http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/lecture-ratio/region')
         ]);
 
         const compareJson = await compareRes.json();
