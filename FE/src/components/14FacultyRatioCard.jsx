@@ -21,7 +21,7 @@ const diffClass = (d) =>
 // 🚀 [수정] YEARS를 2022, 2023, 2024로 되돌립니다.
 const YEARS = ['2022', '2023', '2024'];
 
-const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export default function FacultyStudentRatio() {
   const [yiuData, setYiuData] = useState({});

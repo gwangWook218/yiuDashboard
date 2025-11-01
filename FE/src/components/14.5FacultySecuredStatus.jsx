@@ -29,7 +29,7 @@ const YIU_COLOR = BRAND;
 const YEARS = ["2022", "2023", "2024"]; // 연도 배열
 
 // API 엔드포인트 정의 (로컬호스트 URL은 예시입니다)
-const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const NOTICE_URL = `${BASE_URL}/api/faculty/fulltime/ensure/notice`;   // 고시 상세
 const COMPARE_URL = `${BASE_URL}/api/faculty/fulltime/ensure/compare`; // 대학 비교
 const REGION_URL = `${BASE_URL}/api/faculty/fulltime/ensure/region`;   // 지역별 비교

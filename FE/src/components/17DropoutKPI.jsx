@@ -21,7 +21,7 @@ const DOUGHNUT_RISK_COLOR = "#D85A5A";
 const DOUGHNUT_RISK_SOFT = "rgba(216, 90, 90, 0.7)";
 const DOUGHNUT_NORMAL_COLOR = "#89C4C5";
 const DOUGHNUT_NORMAL_SOFT = "rgba(137, 196, 197, 0.7)";
-const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 function makeDeptDoughnutData(v) {
   const totalCount = v.total.count;

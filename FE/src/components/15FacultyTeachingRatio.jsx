@@ -18,7 +18,7 @@ const diffArrow = (d) => (d > 0 ? "▲" : d < 0 ? "▼" : "—");
 const diffClass = (d) =>
   d > 0 ? "text-rose-600" : d < 0 ? "text-[#028EA7]" : "text-slate-500";
 
-const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const YEARS = ['2022', '2023', '2024'];
 
 export default function FacultyStudentRatio() {

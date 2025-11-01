@@ -29,7 +29,7 @@ const UNIVERSITY_SOFT_COLORS = {
 
 
 const YEARS = ['2022', '2023', '2024'];
-const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+const BASE_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const API_ENDPOINTS = {
     uni: '/api/faculty/research/funding-per-faculty/compare',
 };
