@@ -18,6 +18,7 @@ const diffArrow = (d) => (d > 0 ? "▲" : d < 0 ? "▼" : "—");
 const diffClass = (d) =>
   d > 0 ? "text-rose-600" : d < 0 ? "text-[#028EA7]" : "text-slate-500";
 
+const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 const YEARS = ['2022', '2023', '2024'];
 
 export default function FacultyStudentRatio() {
@@ -31,8 +32,8 @@ export default function FacultyStudentRatio() {
     const fetchData = async () => {
       try {
         const [compareRes, regionRes] = await Promise.all([
-          fetch('http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/lecture-ratio/compare'),
-          fetch('http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/lecture-ratio/region')
+          fetch(`${BASE_URL}/api/admin/lecture-ratio/compare`),
+          fetch(`${BASE_URL}/api/admin/lecture-ratio/region`)
         ]);
 
         const compareJson = await compareRes.json();

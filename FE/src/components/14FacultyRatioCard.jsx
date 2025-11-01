@@ -19,7 +19,9 @@ const diffClass = (d) =>
   d > 0 ? "text-rose-600" : d < 0 ? "text-[#028EA7]" : "text-slate-500";
 
 // 🚀 [수정] YEARS를 2022, 2023, 2024로 되돌립니다.
-const YEARS = ['2022', '2023', '2024']; 
+const YEARS = ['2022', '2023', '2024'];
+
+const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 export default function FacultyStudentRatio() {
   const [yiuData, setYiuData] = useState({});
@@ -34,8 +36,8 @@ export default function FacultyStudentRatio() {
     const fetchData = async () => {
       try {
         const [compareRes, regionRes] = await Promise.all([
-          fetch('http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/student-ratio/compare'),
-          fetch('http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/student-ratio/region')
+          fetch(`${BASE_URL}/api/admin/student-ratio/compare`),
+          fetch(`${BASE_URL}/api/admin/student-ratio/region`)
         ]);
 
         const compareJson = await compareRes.json();
