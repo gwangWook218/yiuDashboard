@@ -21,6 +21,7 @@ const DOUGHNUT_RISK_COLOR = "#D85A5A";
 const DOUGHNUT_RISK_SOFT = "rgba(216, 90, 90, 0.7)";
 const DOUGHNUT_NORMAL_COLOR = "#89C4C5";
 const DOUGHNUT_NORMAL_SOFT = "rgba(137, 196, 197, 0.7)";
+const BASE_URL = = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 function makeDeptDoughnutData(v) {
   const totalCount = v.total.count;
@@ -130,7 +131,7 @@ export default function DropoutKPI() {
 
   useEffect(() => {
     axios
-      .get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/ai?year=${year}`)
+      .get(`${BASE_URL}/api/admin/dropout/ai?year=${year}`)
       .then((res) => {
         // "소계"는 제외
         const filtered = res.data.filter((d) => d.departments !== "소계");
@@ -141,7 +142,7 @@ export default function DropoutKPI() {
 
   useEffect(() => {
     axios
-      .get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/detail?deptId=${deptId}&year=${year}`)
+      .get(`${BASE_URL}/api/admin/dropout/detail?deptId=${deptId}&year=${year}`)
       .then((res) => setDeptDetail(res.data))
       .catch((err) => console.error(err));
   }, [deptId, year]);
@@ -150,8 +151,8 @@ export default function DropoutKPI() {
       const loadFactor = async () => {
         try {
           const [res2023, res2024] = await Promise.all([
-            axios.get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/factor?year=2023&type=${factorTab}`),
-            axios.get(`http://ec2-13-209-7-237.ap-northeast-2.compute.amazonaws.com:8080/api/admin/dropout/factor?year=2024&type=${factorTab}`),
+            axios.get(`${BASE_URL}/api/admin/dropout/factor?year=2023&type=${factorTab}`),
+            axios.get(`${BASE_URL}/api/admin/dropout/factor?year=2024&type=${factorTab}`),
           ]);
           // API → 그래프용 형식
           const mapData = (arr) =>
