@@ -1,14 +1,14 @@
 // src/pages/Report.jsx
 import React from "react";
-import StaffHeaderNav from "../components/StaffHeaderNav";
-import StaffTopNav from "../components/StaffTopNav";
+import StaffHeaderNav from "../components/staffHeaderNav";
+import StaffTopNav from "../components/staffTopNav";
 
 import UniCompareKPI from "../components/18UniCompareKPI";
 import GraduateCareerChart from "../components/12GraduateCareerChart";
 import FacultyRatioCard from "../components/14FacultyRatioCard";
 import FacultyTeachingRatio from "../components/15FacultyTeachingRatio";
 import GraduateCareerStatus from "../components/06GraduateCareerStatus";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 
 export default function Faculty() {
   return (

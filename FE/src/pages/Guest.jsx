@@ -4,7 +4,7 @@ import { FaUserGraduate, FaGlobe, FaUserTie } from "react-icons/fa";
 import { IoMdRibbon, IoIosSearch } from "react-icons/io"; 
 
 import GuestTopNav from "../components/GuestTopNav";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 import KakaoMap from "../components/KakaoMap";
 import facilities from "../data/facilities";
 import HeroHeader from "../components/HeroHeader";

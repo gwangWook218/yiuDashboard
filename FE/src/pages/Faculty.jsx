@@ -1,13 +1,13 @@
 // src/pages/Faculty.jsx
 import React from "react";
-import StaffHeaderNav from "../components/StaffHeaderNav";
-import StaffTopNav from "../components/StaffTopNav";
+import StaffHeaderNav from "../components/staffHeaderNav";
+import StaffTopNav from "../components/staffTopNav";
 
 import FacultySecuredStatus from "../components/14.5FacultySecuredStatus";
 import ScholarshipKPI from "../components/19ScholarshipKPI";
 import FacultyResearchExpensePerFaculty from "../components/16.5FacultyResearchExpensePerFaculty";
 import GraduateCareerStatus from "../components/06GraduateCareerStatus";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 
 export default function Faculty() {
   return (

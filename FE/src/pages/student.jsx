@@ -1,13 +1,13 @@
 // src/pages/student.jsx
 import React from "react";
 import HeaderNav from "../components/HeaderNav";
-import StudentTopNav from "../components/StudentTopNav";
+import StudentTopNav from "../components/studentTopNav";
 
 import PerformanceRoadmapGraph from "../components/02GPAanalysis";
 import CreditProgressDetailCard from "../components/04CreditProgressCard";
 import GraduateCareerChart from "../components/12GraduateCareerChart";
 import GraduateCareerStatus from "../components/06GraduateCareerStatus";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 
 export default function Student() {
   return (

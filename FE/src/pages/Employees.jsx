@@ -1,11 +1,11 @@
 // src/pages/Employees.jsx
 import React from "react";
 
-import StaffHeaderNav from "../components/StaffHeaderNav";
-import StaffTopNav from "../components/StaffTopNav";
+import StaffHeaderNav from "../components/staffHeaderNav";
+import StaffTopNav from "../components/staffTopNav";
 
 import DropoutKPI from "../components/17DropoutKPI";
-import Footer from "../components/Footer";
+import Footer from "../components/footer";
 import GraduateCareerStatus from "../components/06GraduateCareerStatus";
 
 export default function Employees() {
