@@ -1,7 +1,7 @@
 // src/pages/student.jsx
 import React from "react";
 import HeaderNav from "../components/HeaderNav";
-import StudentTopNav from "../components/StudentTopNav";
+import StudentTopNav from "../components/studentTopNav";
 
 import PerformanceRoadmapGraph from "../components/02GPAanalysis";
 import CreditProgressDetailCard from "../components/04CreditProgressCard";
